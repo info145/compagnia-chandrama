@@ -236,86 +236,89 @@ function initLightbox() {
 /* ════════════════════════════════════════════════════
    ACTRESS MODAL
    ════════════════════════════════════════════════════ */
-window.openActress = function(card) {
+function initActressModal() {
   const modal = document.getElementById('actressModal')
-  document.getElementById('actressName').textContent = card.dataset.name || ''
-  document.getElementById('actressRole').textContent = card.dataset.role || ''
-  document.getElementById('actressImg').src           = card.dataset.img  || ''
-  document.getElementById('actressImg').alt           = card.dataset.name || ''
+  if (!modal) return
 
-  const funEl = document.getElementById('actressFun')
-  funEl.innerHTML = (card.dataset.fun || '')
-    .split('. ')
-    .filter(s => s.trim())
-    .map(s => `<p>${s.trim()}${s.endsWith('.') ? '' : '.'}</p>`)
-    .join('')
+  function openActress(card) {
+    document.getElementById('actressName').textContent = card.dataset.name || ''
+    document.getElementById('actressRole').textContent = card.dataset.role || ''
+    document.getElementById('actressImg').src          = card.dataset.img  || ''
+    document.getElementById('actressImg').alt          = card.dataset.name || ''
 
-  const bioEl = document.getElementById('actressBio')
-  const bio = card.dataset.bio || ''
-  bioEl.innerHTML = bio
-    ? bio.split('. ').filter(s => s.trim()).map(s => `<p>${s.trim()}${s.endsWith('.') ? '' : '.'}</p>`).join('')
-    : ''
+    const toParas = str => (str || '')
+      .split(/\.(?:\s+)/)
+      .map(s => s.trim()).filter(Boolean)
+      .map(s => `<p>${s}${s.endsWith('.') ? '' : '.'}</p>`).join('')
 
-  modal.classList.add('is-open')
-  document.body.style.overflow = 'hidden'
-}
+    document.getElementById('actressFun').innerHTML = toParas(card.dataset.fun)
+    document.getElementById('actressBio').innerHTML = toParas(card.dataset.bio)
 
-window.closeActress = function(e) {
-  if (e && e.target !== document.getElementById('actressModal') && !e.target.classList.contains('actress-modal__close')) return
-  document.getElementById('actressModal').classList.remove('is-open')
-  document.body.style.overflow = ''
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    const am = document.getElementById('actressModal')
-    if (am?.classList.contains('is-open')) { am.classList.remove('is-open'); document.body.style.overflow = '' }
+    modal.classList.add('is-open')
+    document.body.style.overflow = 'hidden'
   }
-})
+
+  function closeActress() {
+    modal.classList.remove('is-open')
+    document.body.style.overflow = ''
+  }
+
+  document.querySelectorAll('.cast-card').forEach(card => {
+    card.addEventListener('click', () => openActress(card))
+  })
+
+  modal.addEventListener('click', e => {
+    if (e.target === modal) closeActress()
+  })
+
+  modal.querySelector('.actress-modal__close')
+    ?.addEventListener('click', closeActress)
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeActress()
+  })
+}
 
 /* ════════════════════════════════════════════════════
    ARTICLE MODAL
    ════════════════════════════════════════════════════ */
-window.openArticle = function(card) {
-  const modal   = document.getElementById('articleModal')
-  const title   = card.dataset.title   || ''
-  const tag     = card.dataset.tag     || ''
-  const date    = card.dataset.date    || ''
-  const img     = card.dataset.img     || ''
-  const content = card.dataset.content || ''
-
-  document.getElementById('articleTitle').textContent = title
-  document.getElementById('articleTag').textContent   = tag
-  document.getElementById('articleDate').textContent  = date
-  document.getElementById('articleImg').src           = img
-  document.getElementById('articleImg').alt           = title
-
-  const bodyEl = document.getElementById('articleBody')
-  bodyEl.innerHTML = content
-    .split('\n\n')
-    .map(p => `<p>${p.trim()}</p>`)
-    .join('')
-
-  modal.classList.add('is-open')
-  document.body.style.overflow = 'hidden'
-}
-
-window.closeArticle = function(e) {
-  if (e && e.target !== document.getElementById('articleModal') && !e.target.classList.contains('article-modal__close')) return
+function initArticleModal() {
   const modal = document.getElementById('articleModal')
-  modal.classList.remove('is-open')
-  document.body.style.overflow = ''
-}
+  if (!modal) return
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    const modal = document.getElementById('articleModal')
-    if (modal?.classList.contains('is-open')) {
-      modal.classList.remove('is-open')
-      document.body.style.overflow = ''
-    }
+  function openArticle(card) {
+    document.getElementById('articleTitle').textContent = card.dataset.title || ''
+    document.getElementById('articleTag').textContent   = card.dataset.tag   || ''
+    document.getElementById('articleDate').textContent  = card.dataset.date  || ''
+    document.getElementById('articleImg').src           = card.dataset.img   || ''
+    document.getElementById('articleImg').alt           = card.dataset.title || ''
+
+    document.getElementById('articleBody').innerHTML = (card.dataset.content || '')
+      .split('\n\n').map(p => `<p>${p.trim()}</p>`).join('')
+
+    modal.classList.add('is-open')
+    document.body.style.overflow = 'hidden'
   }
-})
+
+  function closeArticle() {
+    modal.classList.remove('is-open')
+    document.body.style.overflow = ''
+  }
+
+  document.querySelectorAll('.blog-card__link').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation()
+      openArticle(btn.closest('.blog-card'))
+    })
+  })
+
+  modal.addEventListener('click', e => { if (e.target === modal) closeArticle() })
+  modal.querySelector('.article-modal__close')?.addEventListener('click', closeArticle)
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeArticle()
+  })
+}
 
 /* ════════════════════════════════════════════════════
    INIT
@@ -327,4 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initDatePicker()
   initForms()
   initLightbox()
+  initActressModal()
+  initArticleModal()
 })
