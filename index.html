@@ -4,1573 +4,783 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Compagnia Chāndrama – Teatro Transfemminista Torino</title>
-  <meta name="description" content="Siamo una giovane compagnia teatrale transfemminista con base a Torino. Teatro fisico immersivo, canto, danza e prosa." />
-  <meta name="keywords" content="teatro torino, teatro transfemminista, compagnia chandrama, oltre i muri, teatro fisico" />
+  <meta name="description" content="Compagnia teatrale transfemminista di Torino. Oltre i Muri – ispirato a Il ballo delle pazze. Teatro fisico, canto, danza, prosa." />
   <meta property="og:title" content="Compagnia Chāndrama – Teatro Transfemminista Torino" />
-  <meta property="og:description" content="Teatro fisico immersivo che illumina il buio. Oltre i Muri – uno spettacolo che scuote le coscienze." />
+  <meta property="og:description" content="Teatro transfemminista che illumina il buio. Oltre i Muri in scena a Torino." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=1200" />
-
-  <!-- Google Fonts -->
+  <link rel="icon" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'lunar-dark':   '#0a0a0a',
-            'lunar-gold':   '#c0a070',
-            'lunar-gold-light': '#d4b88a',
-            'lunar-purple': '#6b4e9e',
-            'lunar-purple-light': '#8a6cc0',
-            'lunar-cream':  '#e8ddd0',
-            'lunar-gray':   '#1a1a1a',
-            'lunar-gray2':  '#242424',
-          },
-          fontFamily: {
-            serif: ['Playfair Display', 'Georgia', 'serif'],
-            sans:  ['Inter', 'system-ui', 'sans-serif'],
-          },
-        },
-      },
-    }
-  </script>
-
-  <!-- Alpine.js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-  <!-- Flatpickr -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" />
-
-  <style>
-    /* ── Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background-color: #0a0a0a;
-      color: #e8ddd0;
-      font-family: 'Inter', system-ui, sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #0a0a0a; }
-    ::-webkit-scrollbar-thumb { background: #c0a070; border-radius: 2px; }
-
-    /* ── Navbar ── */
-    #navbar {
-      transition: background 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease;
-    }
-    #navbar.scrolled {
-      background: rgba(10,10,10,0.95) !important;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 1px 0 rgba(192,160,112,0.15);
-    }
-    .nav-link {
-      position: relative;
-      font-size: 0.8rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #e8ddd0;
-      transition: color 0.3s;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -3px; left: 0;
-      width: 0; height: 1px;
-      background: #c0a070;
-      transition: width 0.3s ease;
-    }
-    .nav-link:hover { color: #c0a070; }
-    .nav-link:hover::after { width: 100%; }
-
-    /* ── Hero ── */
-    #hero {
-      position: relative;
-      height: 100dvh;
-      min-height: 600px;
-      overflow: hidden;
-    }
-    #hero-bg {
-      position: absolute; inset: 0;
-      /* ══ SOSTITUIRE con foto reale: background-image: url('hero.jpg'); ══ */
-      background-image: url('https://images.unsplash.com/photo-1516307365426-bea591f05011?w=1600&q=80');
-      background-size: cover;
-      background-position: center;
-      transform-origin: center;
-      will-change: transform;
-    }
-    #hero-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(10,10,10,0.55) 0%,
-        rgba(10,10,10,0.4) 40%,
-        rgba(10,10,10,0.85) 100%
-      );
-    }
-    .hero-content { position: relative; z-index: 10; }
-    .hero-line { display: block; overflow: hidden; }
-    .hero-line span { display: block; transform: translateY(110%); opacity: 0; }
-
-    /* ── Section fade-in ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
-    .reveal-delay-4 { transition-delay: 0.4s; }
-
-    /* ── Section divider ── */
-    .gold-divider {
-      width: 60px; height: 1px;
-      background: linear-gradient(to right, transparent, #c0a070, transparent);
-      margin: 1.5rem auto;
-    }
-
-    /* ── Section title ── */
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 600;
-      color: #c0a070;
-      letter-spacing: 0.03em;
-      line-height: 1.1;
-    }
-    .section-subtitle {
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #6b4e9e;
-      margin-bottom: 0.75rem;
-    }
-
-    /* ── Buttons ── */
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      border: 1px solid #c0a070;
-      color: #c0a070;
-      padding: 0.85rem 2rem;
-      font-size: 0.8rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s, transform 0.2s;
-      text-decoration: none;
-    }
-    .btn-primary:hover {
-      background: #c0a070;
-      color: #0a0a0a;
-      transform: translateY(-2px);
-    }
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      border: 1px solid rgba(232,221,208,0.3);
-      color: #e8ddd0;
-      padding: 0.85rem 2rem;
-      font-size: 0.8rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      cursor: pointer;
-      transition: border-color 0.3s, color 0.3s, transform 0.2s;
-      text-decoration: none;
-    }
-    .btn-secondary:hover {
-      border-color: #e8ddd0;
-      color: #fff;
-      transform: translateY(-2px);
-    }
-    .btn-gold-fill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: #c0a070;
-      border: 1px solid #c0a070;
-      color: #0a0a0a;
-      padding: 0.85rem 2rem;
-      font-size: 0.8rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      text-decoration: none;
-    }
-    .btn-gold-fill:hover {
-      background: #d4b88a;
-      transform: translateY(-2px);
-    }
-
-    /* ── Cast card ── */
-    .cast-card {
-      background: #111;
-      border: 1px solid rgba(192,160,112,0.12);
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-      overflow: hidden;
-    }
-    .cast-card:hover {
-      border-color: rgba(192,160,112,0.5);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(107,78,158,0.15);
-    }
-    .cast-card img {
-      width: 100%; aspect-ratio: 3/4;
-      object-fit: cover;
-      filter: grayscale(30%) brightness(0.85);
-      transition: filter 0.4s;
-    }
-    .cast-card:hover img { filter: grayscale(0%) brightness(1); }
-
-    /* ── Timeline (date passate) ── */
-    .timeline-scroll {
-      display: flex;
-      gap: 1.5rem;
-      overflow-x: auto;
-      padding: 1.5rem 0 2rem;
-      scrollbar-width: thin;
-      scrollbar-color: #c0a070 #111;
-      -webkit-overflow-scrolling: touch;
-    }
-    .timeline-scroll::-webkit-scrollbar { height: 3px; }
-    .timeline-scroll::-webkit-scrollbar-track { background: #111; }
-    .timeline-scroll::-webkit-scrollbar-thumb { background: #c0a070; }
-    .timeline-card {
-      flex: 0 0 220px;
-      background: #111;
-      border: 1px solid rgba(192,160,112,0.1);
-      transition: border-color 0.3s, transform 0.3s;
-      overflow: hidden;
-    }
-    .timeline-card:hover {
-      border-color: rgba(192,160,112,0.4);
-      transform: translateY(-4px);
-    }
-    .timeline-card img {
-      width: 100%; aspect-ratio: 2/3;
-      object-fit: cover;
-      filter: brightness(0.8);
-      transition: filter 0.3s;
-    }
-    .timeline-card:hover img { filter: brightness(1); }
-    .sold-out-badge {
-      display: inline-block;
-      background: #6b4e9e;
-      color: #fff;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      font-family: 'Inter', sans-serif;
-    }
-
-    /* ── Masonry gallery ── */
-    .masonry {
-      columns: 3;
-      column-gap: 0.75rem;
-    }
-    @media (max-width: 768px) { .masonry { columns: 2; } }
-    @media (max-width: 480px) { .masonry { columns: 1; } }
-    .masonry-item {
-      break-inside: avoid;
-      margin-bottom: 0.75rem;
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-    }
-    .masonry-item img {
-      width: 100%;
-      display: block;
-      filter: brightness(0.75) grayscale(20%);
-      transition: filter 0.4s, transform 0.5s;
-    }
-    .masonry-item:hover img { filter: brightness(1) grayscale(0%); transform: scale(1.03); }
-    .masonry-item::after {
-      content: '';
-      position: absolute; inset: 0;
-      border: 1px solid transparent;
-      transition: border-color 0.3s;
-      pointer-events: none;
-    }
-    .masonry-item:hover::after { border-color: rgba(192,160,112,0.4); }
-
-    /* ── Blog cards ── */
-    .blog-card {
-      background: #111;
-      border: 1px solid rgba(192,160,112,0.1);
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-    }
-    .blog-card:hover {
-      border-color: rgba(192,160,112,0.4);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
-    .blog-card img {
-      width: 100%; aspect-ratio: 16/9;
-      object-fit: cover;
-      filter: brightness(0.7) grayscale(20%);
-      transition: filter 0.4s;
-    }
-    .blog-card:hover img { filter: brightness(0.9) grayscale(0%); }
-    .blog-tag {
-      display: inline-block;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-family: 'Inter', sans-serif;
-      color: #6b4e9e;
-      border: 1px solid #6b4e9e;
-      padding: 2px 8px;
-    }
-
-    /* ── Form ── */
-    .form-input {
-      width: 100%;
-      background: #111;
-      border: 1px solid rgba(192,160,112,0.2);
-      color: #e8ddd0;
-      padding: 0.85rem 1rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.3s;
-      appearance: none;
-    }
-    .form-input:focus { border-color: #c0a070; }
-    .form-input::placeholder { color: rgba(232,221,208,0.3); }
-    .form-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: rgba(232,221,208,0.5);
-      display: block;
-      margin-bottom: 0.4rem;
-      font-family: 'Inter', sans-serif;
-    }
-    select.form-input option { background: #111; }
-
-    /* ── Flatpickr override ── */
-    .flatpickr-calendar { background: #111 !important; border: 1px solid rgba(192,160,112,0.3) !important; }
-    .flatpickr-day.selected { background: #c0a070 !important; border-color: #c0a070 !important; color: #0a0a0a !important; }
-    .flatpickr-day:hover { background: rgba(192,160,112,0.2) !important; }
-
-    /* ── Floating CTA ── */
-    #floating-cta {
-      position: fixed;
-      bottom: 2rem; right: 2rem;
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      align-items: flex-end;
-    }
-    .float-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.7rem 1.2rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      text-decoration: none;
-      border-radius: 0;
-      cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s;
-      white-space: nowrap;
-    }
-    .float-btn:hover { transform: translateX(-4px); }
-    .float-phone { background: #c0a070; color: #0a0a0a; }
-    .float-wa { background: #25D366; color: #fff; }
-
-    /* ── Date picker section ── */
-    .date-pill {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      background: #111;
-      border: 1px solid rgba(192,160,112,0.2);
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      transition: border-color 0.3s, background 0.3s;
-      min-width: 120px;
-      text-align: center;
-    }
-    .date-pill:hover, .date-pill.active {
-      border-color: #c0a070;
-      background: rgba(192,160,112,0.07);
-    }
-    .date-pill.active .date-day { color: #c0a070; }
-
-    /* ── Lightbox ── */
-    #lightbox {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.95);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-    }
-    #lightbox.open { display: flex; }
-    #lightbox img {
-      max-width: 90vw;
-      max-height: 90vh;
-      object-fit: contain;
-    }
-
-    /* ── Logo mezzaluna SVG ── */
-    .logo-wrap { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
-    .logo-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      color: #c0a070;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-    }
-
-    /* ── Mobile menu ── */
-    #mobile-menu {
-      position: fixed; inset: 0;
-      background: rgba(10,10,10,0.98);
-      z-index: 998;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2rem;
-      transform: translateX(100%);
-      transition: transform 0.4s ease;
-    }
-    #mobile-menu.open { transform: translateX(0); }
-    .mobile-nav-link {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: #e8ddd0;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    .mobile-nav-link:hover { color: #c0a070; }
-
-    /* ── Horizontal rule ── */
-    .section-rule {
-      border: none;
-      border-top: 1px solid rgba(192,160,112,0.1);
-    }
-
-    /* ── Responsive text ── */
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 9vw, 8rem);
-      font-weight: 700;
-      line-height: 0.95;
-      letter-spacing: -0.02em;
-      color: #fff;
-    }
-    .hero-show-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.2rem, 3vw, 2rem);
-      font-style: italic;
-      color: #c0a070;
-      letter-spacing: 0.05em;
-    }
-    .hero-tagline {
-      font-family: 'Inter', sans-serif;
-      font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: rgba(232,221,208,0.7);
-    }
-
-    /* ── Success message ── */
-    .form-success {
-      display: none;
-      background: rgba(192,160,112,0.1);
-      border: 1px solid rgba(192,160,112,0.4);
-      color: #c0a070;
-      padding: 1rem;
-      font-size: 0.85rem;
-      text-align: center;
-      font-family: 'Inter', sans-serif;
-      letter-spacing: 0.05em;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
 </head>
+<body>
 
-<body class="bg-lunar-dark" x-data="siteApp()" @scroll.window="onScroll()">
-
-  <!-- ══════════════════════════════════════════
-       NAVBAR
-  ══════════════════════════════════════════ -->
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 px-6 lg:px-12 py-5">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-
-      <!-- Logo -->
-      <a href="#hero" class="logo-wrap">
-        <!-- Logo reale dalla cartella del progetto -->
-        <!-- ══ Se vuoi sostituire con versione alta qualità: rinomina il file e aggiorna src ══ -->
-        <img src="logo bassa qualità.png" alt="Chāndrama" style="height:36px; width:auto; object-fit:contain; filter: brightness(1.1);" />
-        <span class="logo-text">Chāndrama</span>
+  <!-- ══ NAVBAR ══ -->
+  <nav id="nav">
+    <div class="nav__inner">
+      <a href="#hero" class="nav__logo">
+        <!-- Logo reale. Sostituisci con versione alta qualità se disponibile -->
+        <img src="/logo.png" alt="Chāndrama" />
+        <span>Chāndrama</span>
       </a>
-
-      <!-- Desktop nav -->
-      <div class="hidden lg:flex items-center gap-8">
-        <a href="#chi-siamo" class="nav-link">Chi siamo</a>
-        <a href="#spettacolo" class="nav-link">Lo spettacolo</a>
-        <a href="#date-passate" class="nav-link">Date passate</a>
-        <a href="#blog" class="nav-link">Blog</a>
-        <a href="#galleria" class="nav-link">Galleria</a>
-        <a href="#contatti" class="nav-link">Contatti</a>
-        <a href="#prenotazioni" class="btn-primary text-xs py-2 px-5">Prenota</a>
-      </div>
-
-      <!-- Mobile hamburger -->
-      <button @click="menuOpen = !menuOpen" class="lg:hidden flex flex-col gap-1.5 p-2 z-[999]">
-        <span class="block w-6 h-px bg-lunar-gold transition-all" :class="menuOpen ? 'rotate-45 translate-y-2' : ''"></span>
-        <span class="block w-6 h-px bg-lunar-gold transition-all" :class="menuOpen ? 'opacity-0' : ''"></span>
-        <span class="block w-6 h-px bg-lunar-gold transition-all" :class="menuOpen ? '-rotate-45 -translate-y-2' : ''"></span>
+      <ul class="nav__links">
+        <li><a href="#spettacolo">Spettacolo</a></li>
+        <li><a href="#date-passate">Date</a></li>
+        <li><a href="#galleria">Galleria</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#contatti">Contatti</a></li>
+        <li><a href="#prenotazioni" class="nav__cta">Prenota</a></li>
+      </ul>
+      <button class="nav__burger" id="burger" aria-label="Menu">
+        <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- Mobile menu -->
-  <div id="mobile-menu" :class="menuOpen ? 'open' : ''">
-    <a href="#chi-siamo" @click="menuOpen=false" class="mobile-nav-link">Chi siamo</a>
-    <a href="#spettacolo" @click="menuOpen=false" class="mobile-nav-link">Lo spettacolo</a>
-    <a href="#date-passate" @click="menuOpen=false" class="mobile-nav-link">Date passate</a>
-    <a href="#prenotazioni" @click="menuOpen=false" class="mobile-nav-link">Prenota</a>
-    <a href="#blog" @click="menuOpen=false" class="mobile-nav-link">Blog</a>
-    <a href="#galleria" @click="menuOpen=false" class="mobile-nav-link">Galleria</a>
-    <a href="#contatti" @click="menuOpen=false" class="mobile-nav-link">Contatti</a>
+  <!-- ══ MOBILE MENU ══ -->
+  <div class="mobile-menu" id="mobile-menu">
+    <nav class="mobile-menu__nav">
+      <a href="#spettacolo" class="mobile-menu__link">Spettacolo</a>
+      <a href="#prenotazioni" class="mobile-menu__link">Prenota</a>
+      <a href="#date-passate" class="mobile-menu__link">Date passate</a>
+      <a href="#galleria" class="mobile-menu__link">Galleria</a>
+      <a href="#blog" class="mobile-menu__link">Blog</a>
+      <a href="#contatti" class="mobile-menu__link">Contatti</a>
+    </nav>
+    <a href="https://instagram.com/compagnia.chandrama" target="_blank" class="mobile-menu__ig">@compagnia.chandrama</a>
   </div>
 
 
-  <!-- ══════════════════════════════════════════
-       HERO
-  ══════════════════════════════════════════ -->
-  <section id="hero" class="relative">
-    <!-- ══ SOSTITUIRE: src → 'hero.jpg' scaricata da Instagram (foto di scena di Oltre i Muri) ══ -->
-    <div id="hero-bg"></div>
-    <div id="hero-overlay"></div>
+  <!-- ══ HERO ══ -->
+  <section class="hero" id="hero">
+    <!--
+      FOTO HERO: salva la foto di scena migliore da Instagram come
+      public/assets/hero.jpg poi sostituisci il background-image in style.css
+    -->
+    <div class="hero__bg" id="hero-bg"></div>
+    <div class="hero__overlay"></div>
 
-    <div class="hero-content relative z-10 h-screen min-h-[600px] flex flex-col justify-end pb-20 px-8 lg:px-20 max-w-7xl mx-auto">
-      <div>
-        <div class="hero-line mb-2">
-          <span class="hero-tagline" id="h-tagline">Teatro Transfemminista · Torino</span>
-        </div>
-        <div class="hero-line">
-          <span class="hero-title" id="h-title">Chāndrama</span>
-        </div>
-        <div class="hero-line mt-3 mb-6">
-          <span class="hero-show-title" id="h-show">— Oltre i Muri</span>
-        </div>
-        <div class="hero-line mb-10">
-          <span class="block text-lunar-cream/60 text-sm tracking-widest uppercase max-w-sm" id="h-sub">Teatro fisico immersivo che illumina il buio</span>
-        </div>
-        <div class="hero-line">
-          <span class="flex flex-wrap gap-4" id="h-cta">
-            <a href="#prenotazioni" class="btn-primary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="1"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Prenota lo spettacolo
+    <div class="hero__content">
+      <p class="hero__eyebrow" id="h-eyebrow">Est. Torino · 2022</p>
+      <h1 class="hero__title">
+        <span class="hero__title-word" id="h-word-1">Compagnia</span>
+        <span class="hero__title-word hero__title-word--accent" id="h-word-2">Chāndrama</span>
+      </h1>
+      <div class="hero__rule" id="h-rule"></div>
+      <p class="hero__descriptor" id="h-descriptor">Teatro Transfemminista</p>
+      <p class="hero__show" id="h-show">
+        <span class="hero__show-dash">—</span>
+        <span class="hero__show-name">Oltre i Muri</span>
+      </p>
+      <div class="hero__actions" id="h-actions">
+        <a href="#prenotazioni" class="btn btn--primary">Prenota lo spettacolo</a>
+        <a href="#chi-siamo" class="btn btn--ghost">Chi siamo</a>
+      </div>
+    </div>
+
+    <div class="hero__scroll-indicator">
+      <span>scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 01 · CHI SIAMO ══ -->
+  <section class="section" id="chi-siamo">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">01</span>
+        <h2 class="section__title">Chi Siamo</h2>
+      </div>
+
+      <div class="chi-siamo__grid">
+        <div class="chi-siamo__text">
+          <p class="chi-siamo__bio reveal">
+            Siamo una giovane compagnia teatrale transfemminista con base a Torino.
+          </p>
+          <p class="chi-siamo__body reveal">
+            Nate a Torino nel 2022 dal forte desiderio di diffondere messaggi di lotta e rivendicazione femminile attraverso l'atto teatrale. Tutte noi abbiamo condiviso la stessa formazione all'Atelier Teatro Fisico Philip Radice, un luogo a noi caro.
+          </p>
+          <p class="chi-siamo__body reveal">
+            Lavoriamo con il corpo, la voce e lo spazio come strumenti di liberazione. Il palco è il luogo dove il silenzio imposto trova finalmente parola. La nostra ricerca intreccia teatro fisico immersivo, canto, danza e prosa per smontare — con eleganza, con furia, con bellezza — le strutture di oppressione.
+          </p>
+          <div class="chi-siamo__links reveal">
+            <a href="https://instagram.com/compagnia.chandrama" target="_blank" rel="noopener" class="btn btn--outline">
+              @compagnia.chandrama
             </a>
-            <a href="#contatti" class="btn-secondary">Contattaci</a>
-          </span>
+          </div>
         </div>
-      </div>
 
-      <!-- Scroll indicator -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
-        <span class="text-xs tracking-widest uppercase text-lunar-cream" style="font-size:0.6rem">Scorri</span>
-        <div class="w-px h-12 bg-gradient-to-b from-lunar-gold to-transparent animate-pulse"></div>
+        <div class="chi-siamo__photo reveal">
+          <!--
+            FOTO GRUPPO: scarica la foto di gruppo dal profilo Instagram,
+            salvala come public/assets/gruppo.jpg e sostituisci il commento con:
+            <img src="/assets/gruppo.jpg" alt="Compagnia Chāndrama">
+          -->
+          <div class="photo-slot photo-slot--tall">
+            <span class="photo-slot__label">foto di gruppo<br/>← da Instagram</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
 
-  <!-- ══════════════════════════════════════════
-       CHI SIAMO
-  ══════════════════════════════════════════ -->
-  <section id="chi-siamo" class="py-28 px-8 lg:px-20 max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-2 gap-16 items-center">
-      <div>
-        <p class="section-subtitle reveal">La Compagnia</p>
-        <h2 class="section-title reveal reveal-delay-1">Chi<br/>Siamo</h2>
-        <div class="gold-divider reveal reveal-delay-2" style="margin-left:0"></div>
-        <p class="text-lunar-cream/70 leading-relaxed mt-6 reveal reveal-delay-2" style="font-size:1.05rem">
-          Siamo una giovane compagnia teatrale transfemminista con base a Torino.
-        </p>
-        <p class="text-lunar-cream/55 leading-relaxed mt-4 reveal reveal-delay-3" style="font-size:0.95rem">
-          Nate dall'incontro all'Atelier Teatro Fisico Philip Radice nel 2022, siamo un ensemble di nove artiste che credono nel teatro come atto politico e poetico. Lavoriamo con il corpo, la voce e lo spazio come strumenti di liberazione: il palco è per noi il luogo dove il silenzio imposto trova finalmente parola.
-        </p>
-        <p class="text-lunar-cream/55 leading-relaxed mt-4 reveal reveal-delay-4" style="font-size:0.95rem">
-          La nostra ricerca si muove tra teatro fisico immersivo, canto corale, danza e prosa. Crediamo che l'arte possa e debba smontare le strutture di oppressione — con eleganza, con furia, con bellezza.
-        </p>
-        <div class="mt-8 reveal reveal-delay-4">
-          <a href="https://instagram.com/compagnia.chandrama" target="_blank" rel="noopener" class="btn-primary text-xs">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
-            @compagnia.chandrama
-          </a>
-        </div>
+  <!-- ══ 02 · OLTRE I MURI ══ -->
+  <section class="section section--dark" id="spettacolo">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">02</span>
+        <h2 class="section__title">Oltre i Muri</h2>
       </div>
 
-      <div class="reveal reveal-delay-2">
-        <!-- ══ SOSTITUIRE con foto di gruppo reale scaricata da Instagram: <img src="gruppo.jpg"> ══ -->
-        <div class="relative">
-          <img
-            src="https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&q=80"
-            alt="La compagnia Chāndrama"
-            class="w-full aspect-[4/5] object-cover object-top filter brightness-75"
-          />
-          <div class="absolute inset-0 border border-lunar-gold/20 translate-x-3 translate-y-3 pointer-events-none"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <hr class="section-rule mx-8 lg:mx-20" />
-
-
-  <!-- ══════════════════════════════════════════
-       LO SPETTACOLO
-  ══════════════════════════════════════════ -->
-  <section id="spettacolo" class="py-28 px-8 lg:px-20 max-w-7xl mx-auto">
-
-    <div class="text-center mb-16">
-      <p class="section-subtitle reveal">Primo spettacolo</p>
-      <h2 class="section-title reveal reveal-delay-1">Oltre i Muri</h2>
-      <div class="gold-divider reveal reveal-delay-2"></div>
-      <p class="text-lunar-cream/50 italic mt-4 reveal reveal-delay-2" style="font-family:'Playfair Display',serif; font-size:1rem">
-        Regia di Amalia Stagnaro
-      </p>
-    </div>
-
-    <!-- Sinossi + video -->
-    <div class="grid lg:grid-cols-2 gap-16 mb-20">
-      <div>
-        <p class="section-subtitle reveal">Sinossi</p>
-        <p class="text-lunar-cream/75 leading-relaxed reveal reveal-delay-1" style="font-size:1.05rem; font-family:'Playfair Display',serif; font-style:italic">
-          "Un coro che si libera tra i corridoi asettici dell'ospedale, un grido che oltrepassa i muri e scuote le coscienze di ognunə di noi."
+      <!-- Sinossi -->
+      <div class="spettacolo__intro reveal">
+        <p class="spettacolo__quote">
+          "Un coro che si libera tra i corridoi asettici dell'ospedale,<br />
+          un grido che oltrepassa i muri e scuote le coscienze di ognunə di noi."
         </p>
-        <p class="text-lunar-cream/60 leading-relaxed mt-5 reveal reveal-delay-2" style="font-size:0.95rem">
-          Attraverso storie di donne catalogate come isteriche, <em>Oltre i muri</em> vuole denunciare il maschilismo etero-patriarcale dominante nella società del secolo scorso, strizzando l'occhio alle oppressioni odierne.
-        </p>
-        <p class="text-lunar-cream/55 leading-relaxed mt-4 reveal reveal-delay-3" style="font-size:0.95rem">
-          Potente, poetica e provocatoria, la pièce è un alternarsi di luce e ombra: voci che cantano, corpi che resistono, silenzi che accusano. Il manicomio come metafora del patriarcato. L'isteria come ribellione negata.
-        </p>
-
-        <div class="mt-8 grid grid-cols-2 gap-4 reveal reveal-delay-3">
-          <div class="border border-lunar-gold/15 p-4">
-            <span class="text-xs tracking-widest uppercase text-lunar-gold/60 block mb-1">Debutto</span>
-            <span class="text-lunar-cream/80" style="font-size:0.9rem">Luglio 2022</span>
-          </div>
-          <div class="border border-lunar-gold/15 p-4">
-            <span class="text-xs tracking-widest uppercase text-lunar-gold/60 block mb-1">Repliche</span>
-            <span class="text-lunar-cream/80" style="font-size:0.9rem">Oltre 25</span>
-          </div>
-          <div class="border border-lunar-gold/15 p-4">
-            <span class="text-xs tracking-widest uppercase text-lunar-gold/60 block mb-1">Durata</span>
-            <span class="text-lunar-cream/80" style="font-size:0.9rem">70 min. circa</span>
-          </div>
-          <div class="border border-lunar-gold/15 p-4">
-            <span class="text-xs tracking-widest uppercase text-lunar-gold/60 block mb-1">Biglietti</span>
-            <span class="text-lunar-cream/80" style="font-size:0.9rem">8€ / 10€</span>
-          </div>
-        </div>
       </div>
 
-      <div class="reveal reveal-delay-2">
-        <!-- ══ SOSTITUIRE con embed reale: copia il codice <iframe> da YouTube/Instagram ══ -->
-        <div class="relative aspect-video bg-[#0d0d0d] border border-lunar-gold/15 flex items-center justify-center group cursor-pointer overflow-hidden">
-          <img
-            src="https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=800&q=80"
-            alt="Video Oltre i Muri"
-            class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
-          />
-          <div class="relative z-10 text-center">
-            <div class="w-16 h-16 border border-lunar-gold/60 flex items-center justify-center mx-auto mb-3 group-hover:border-lunar-gold transition-colors">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="#c0a070"><polygon points="5,3 19,12 5,21"/></svg>
+      <div class="spettacolo__grid">
+        <div class="spettacolo__desc">
+          <p class="reveal">
+            Ispirato al romanzo <em>Il ballo delle pazze</em> di Victoria Mas, lo spettacolo è ambientato nell'ospedale psichiatrico Salpêtrière di Parigi, dove venivano internate — per mano maschile — donne scomode, rifiutate, abbandonate.
+          </p>
+          <p class="reveal">
+            Potente e provocatoria, la pièce denuncia il maschilismo etero-patriarcale dell'800, strizzando l'occhio alle oppressioni odierne. Un alternarsi di luce e ombra: canto, ballo, illusione, momenti onirico-poetici che si alternano a crudi momenti di realtà.
+          </p>
+
+          <div class="spettacolo__credits reveal">
+            <div class="credit-row">
+              <span class="credit-label">Regia e Drammaturgia</span>
+              <span class="credit-value">Amalia Stagnaro</span>
             </div>
-            <p class="text-xs tracking-widest uppercase text-lunar-cream/50">Guarda il trailer</p>
-          </div>
-          <!-- ══ Sostituire tutto questo <div> con: <iframe src="https://www.youtube.com/embed/TUO_ID" ...></iframe> ══ -->
-        </div>
-        <p class="text-xs text-lunar-cream/30 mt-2 text-right tracking-wide">
-          <!-- ══ Aggiungere link al video reale ══ -->
-        </p>
-      </div>
-    </div>
-
-    <!-- Cast -->
-    <div>
-      <p class="section-subtitle reveal text-center mb-2">Ensemble</p>
-      <h3 class="section-title reveal reveal-delay-1 text-center text-3xl mb-10">Il Cast</h3>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-
-        <!-- Amalia Stagnaro — regia + attrice -->
-        <div class="cast-card reveal">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="amalia.jpg" alt="Amalia Stagnaro"> ══ -->
-          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" alt="Amalia Stagnaro" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Amalia Stagnaro</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Regia & Attrice</p>
-          </div>
-        </div>
-
-        <!-- Cecilia Andreis -->
-        <div class="cast-card reveal reveal-delay-1">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="cecilia.jpg" alt="Cecilia Andreis"> ══ -->
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80" alt="Cecilia Andreis" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Cecilia Andreis</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
+            <div class="credit-row">
+              <span class="credit-label">Coreografie</span>
+              <span class="credit-value">Amalia Stagnaro · Umberto Rota</span>
+            </div>
+            <div class="credit-row">
+              <span class="credit-label">Luci</span>
+              <span class="credit-value">Luna Mariano</span>
+            </div>
+            <div class="credit-row">
+              <span class="credit-label">Costumi</span>
+              <span class="credit-value">Famiglia Zaccarini</span>
+            </div>
+            <div class="credit-row">
+              <span class="credit-label">Audio</span>
+              <span class="credit-value">Federico Longinotti</span>
+            </div>
+            <div class="credit-row">
+              <span class="credit-label">Debutto</span>
+              <span class="credit-value">Luglio 2022 · Torino</span>
+            </div>
+            <div class="credit-row">
+              <span class="credit-label">Repliche</span>
+              <span class="credit-value">Oltre 25</span>
+            </div>
           </div>
         </div>
 
-        <!-- Michelangela Battistella -->
-        <div class="cast-card reveal reveal-delay-2">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="michelangela.jpg"> ══ -->
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80" alt="Michelangela Battistella" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Michelangela Battistella</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
+        <div class="spettacolo__visual reveal">
+          <!--
+            VIDEO: sostituisci questo blocco con l'iframe del trailer YouTube o Reel Instagram.
+            Es: <iframe src="https://www.youtube.com/embed/ID" ...></iframe>
+          -->
+          <div class="video-placeholder">
+            <div class="video-placeholder__play">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            </div>
+            <p class="video-placeholder__label">Trailer / Reel<br/>← da inserire</p>
           </div>
-        </div>
 
-        <!-- Giulia Donini -->
-        <div class="cast-card reveal reveal-delay-3">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="giulia.jpg"> ══ -->
-          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" alt="Giulia Donini" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Giulia Donini</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
+          <div class="spettacolo__stats">
+            <div class="stat">
+              <span class="stat__num">25+</span>
+              <span class="stat__label">Repliche</span>
+            </div>
+            <div class="stat">
+              <span class="stat__num">8</span>
+              <span class="stat__label">Attrici</span>
+            </div>
+            <div class="stat">
+              <span class="stat__num">2022</span>
+              <span class="stat__label">Debutto</span>
+            </div>
           </div>
-        </div>
-
-        <!-- Rachele Ferraro -->
-        <div class="cast-card reveal">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="rachele.jpg"> ══ -->
-          <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=400&q=80" alt="Rachele Ferraro" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Rachele Ferraro</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
-          </div>
-        </div>
-
-        <!-- Alice Franceschini -->
-        <div class="cast-card reveal reveal-delay-1">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="alice.jpg"> ══ -->
-          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&q=80" alt="Alice Franceschini" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Alice Franceschini</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
-          </div>
-        </div>
-
-        <!-- Valentina Sandri -->
-        <div class="cast-card reveal reveal-delay-2">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="valentina.jpg"> ══ -->
-          <img src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&q=80" alt="Valentina Sandri" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Valentina Sandri</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
-          </div>
-        </div>
-
-        <!-- Penelope Zaccarini -->
-        <div class="cast-card reveal reveal-delay-3">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="penelope.jpg"> ══ -->
-          <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=80" alt="Penelope Zaccarini" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Penelope Zaccarini</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
-          </div>
-        </div>
-
-        <!-- Agnese Zorzi -->
-        <div class="cast-card reveal">
-          <!-- ══ SOSTITUIRE con foto reale da Instagram: <img src="agnese.jpg"> ══ -->
-          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80" alt="Agnese Zorzi" loading="lazy" />
-          <div class="p-4">
-            <p class="text-lunar-gold font-semibold" style="font-family:'Playfair Display',serif; font-size:0.95rem">Agnese Zorzi</p>
-            <p class="text-lunar-cream/40 text-xs tracking-wide mt-0.5 uppercase">Attrice</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <hr class="section-rule mx-8 lg:mx-20" />
-
-
-  <!-- ══════════════════════════════════════════
-       PRENOTAZIONI & DATE FUTURE
-  ══════════════════════════════════════════ -->
-  <section id="prenotazioni" class="py-28 px-8 lg:px-20 max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <p class="section-subtitle reveal">Prossime repliche</p>
-      <h2 class="section-title reveal reveal-delay-1">Prenota<br/>il tuo posto</h2>
-      <div class="gold-divider reveal reveal-delay-2"></div>
-    </div>
-
-    <div class="grid lg:grid-cols-2 gap-16">
-      <!-- Date disponibili -->
-      <div>
-        <p class="text-xs tracking-widest uppercase text-lunar-cream/40 mb-6 reveal">Seleziona una data</p>
-        <div class="flex flex-wrap gap-3 mb-10 reveal reveal-delay-1" id="date-list">
-          <div class="date-pill" data-date="2026-03-28" onclick="selectDate(this)">
-            <span class="text-xs text-lunar-cream/40 tracking-widest uppercase date-month">Mar</span>
-            <span class="text-3xl text-lunar-cream font-light date-day" style="font-family:'Playfair Display',serif">28</span>
-            <span class="text-xs text-lunar-cream/40">2026</span>
-            <span class="text-xs text-lunar-gold/70 mt-1">Teatro Astra · TO</span>
-          </div>
-          <div class="date-pill" data-date="2026-04-05" onclick="selectDate(this)">
-            <span class="text-xs text-lunar-cream/40 tracking-widest uppercase date-month">Apr</span>
-            <span class="text-3xl text-lunar-cream font-light date-day" style="font-family:'Playfair Display',serif">05</span>
-            <span class="text-xs text-lunar-cream/40">2026</span>
-            <span class="text-xs text-lunar-gold/70 mt-1">Teatro Stabile · TO</span>
-          </div>
-          <div class="date-pill" data-date="2026-04-12" onclick="selectDate(this)">
-            <span class="text-xs text-lunar-cream/40 tracking-widest uppercase date-month">Apr</span>
-            <span class="text-3xl text-lunar-cream font-light date-day" style="font-family:'Playfair Display',serif">12</span>
-            <span class="text-xs text-lunar-cream/40">2026</span>
-            <span class="text-xs text-lunar-gold/70 mt-1">Centro Teatro Fisico · TO</span>
-          </div>
-          <div class="date-pill" data-date="2026-04-19" onclick="selectDate(this)">
-            <span class="text-xs text-lunar-cream/40 tracking-widest uppercase date-month">Apr</span>
-            <span class="text-3xl text-lunar-cream font-light date-day" style="font-family:'Playfair Display',serif">19</span>
-            <span class="text-xs text-lunar-cream/40">2026</span>
-            <span class="text-xs text-lunar-gold/70 mt-1">Teatro Carignano · TO</span>
-          </div>
-          <div class="date-pill" data-date="2026-05-02" onclick="selectDate(this)">
-            <span class="text-xs text-lunar-cream/40 tracking-widest uppercase date-month">Mag</span>
-            <span class="text-3xl text-lunar-cream font-light date-day" style="font-family:'Playfair Display',serif">02</span>
-            <span class="text-xs text-lunar-cream/40">2026</span>
-            <span class="text-xs text-lunar-gold/70 mt-1">Teatro Colosseo · TO</span>
-          </div>
-        </div>
-
-        <div class="border border-lunar-gold/15 p-5 reveal reveal-delay-2">
-          <p class="text-xs tracking-widest uppercase text-lunar-gold/60 mb-2">Vuoi organizzare una serata?</p>
-          <p class="text-lunar-cream/50 text-sm leading-relaxed">Siamo disponibili per ospitate in teatri, associazioni culturali, scuole e spazi non convenzionali. Scrivici per organizzare una data su misura.</p>
         </div>
       </div>
 
-      <!-- Form prenotazione -->
-      <div>
-        <!-- ══ FORMSPREE: crea account su formspree.io, crea un form, sostituisci XXXXXX con il tuo ID ══ -->
-        <form
-          id="booking-form"
-          action="https://formspree.io/f/XXXXXX"
-          method="POST"
-          class="space-y-5 reveal reveal-delay-1"
-          onsubmit="handleFormSubmit(event, 'booking-form')"
-        >
-          <input type="hidden" name="_subject" value="Prenotazione – Oltre i Muri" />
-          <input type="hidden" name="data_selezionata" id="selected-date-input" value="" />
+      <!-- Cast -->
+      <div class="cast" id="cast">
+        <h3 class="cast__title reveal">Il Cast</h3>
+        <div class="cast__grid">
 
-          <div>
-            <label class="form-label">Nome completo</label>
-            <input type="text" name="nome" required class="form-input" placeholder="Es. Maria Rossi" />
-          </div>
-          <div>
-            <label class="form-label">Email</label>
-            <input type="email" name="email" required class="form-input" placeholder="tua@email.com" />
-          </div>
-          <div>
-            <label class="form-label">Data scelta</label>
-            <input type="text" id="date-picker" name="data" class="form-input" placeholder="Seleziona una data" readonly />
-          </div>
-          <div>
-            <label class="form-label">Numero di posti</label>
-            <select name="posti" class="form-input">
-              <option value="1">1 posto</option>
-              <option value="2" selected>2 posti</option>
-              <option value="3">3 posti</option>
-              <option value="4">4 posti</option>
-              <option value="5+">5 o più</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Note (opzionale)</label>
-            <textarea name="note" class="form-input" rows="3" placeholder="Accessibilità, richieste speciali…"></textarea>
+          <!-- Amalia Stagnaro -->
+          <div class="cast-card reveal">
+            <!--
+              FOTO CAST: scarica da Instagram → public/assets/amalia.jpg
+              Poi sostituisci il .photo-slot con: <img src="/assets/amalia.jpg" alt="Amalia Stagnaro">
+            -->
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Amalia</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Amalia Stagnaro</p>
+              <p class="cast-card__role">Regia & Attrice</p>
+            </div>
           </div>
 
-          <button type="submit" class="btn-gold-fill w-full justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-            Invia prenotazione
-          </button>
-
-          <div id="booking-success" class="form-success">
-            Prenotazione ricevuta — ti risponderemo entro 24 ore.
+          <!-- Cecilia Andreis -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Cecilia</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Cecilia Andreis</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
           </div>
-        </form>
 
-        <!-- WhatsApp / Telefono -->
-        <div class="mt-6 flex gap-3 reveal reveal-delay-3">
-          <!-- ══ SOSTITUIRE +39XXXXXXXXXX con il numero reale della compagnia ══ -->
-          <a href="tel:+39XXXXXXXXXX" class="btn-secondary flex-1 justify-center text-xs">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.03 0h3a2 2 0 012 1.72c.12.9.37 1.79.71 2.64a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.44-1.44a2 2 0 012.11-.45c.85.34 1.74.59 2.64.71A2 2 0 0122 14.92v2z"/></svg>
-            Chiama
-          </a>
-          <!-- ══ SOSTITUIRE il numero in wa.me/ con quello reale della compagnia ══ -->
-          <a href="https://wa.me/39XXXXXXXXXX?text=Ciao!%20Vorrei%20prenotare%20per%20Oltre%20i%20Muri" target="_blank" class="btn-gold-fill flex-1 justify-center text-xs">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            WhatsApp
-          </a>
+          <!-- Michelangela Battistella -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Michelangela</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Michelangela Battistella</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
+          </div>
+
+          <!-- Giulia Donini -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Giulia</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Giulia Donini</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
+          </div>
+
+          <!-- Rachele Ferraro -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Rachele</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Rachele Ferraro</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
+          </div>
+
+          <!-- Alice Franceschini -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Alice</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Alice Franceschini</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
+          </div>
+
+          <!-- Valentina Sandri -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Valentina</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Valentina Sandri</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
+          </div>
+
+          <!-- Penelope Zaccarini -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Penelope</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Penelope Zaccarini</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
+          </div>
+
+          <!-- Agnese Zorzi -->
+          <div class="cast-card reveal">
+            <div class="photo-slot photo-slot--portrait">
+              <span class="photo-slot__label">Agnese</span>
+            </div>
+            <div class="cast-card__info">
+              <p class="cast-card__name">Agnese Zorzi</p>
+              <p class="cast-card__role">Attrice</p>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
   </section>
 
-  <hr class="section-rule mx-8 lg:mx-20" />
+
+  <!-- ══ 03 · PRENOTAZIONI ══ -->
+  <section class="section" id="prenotazioni">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">03</span>
+        <h2 class="section__title">Prenota</h2>
+      </div>
+
+      <div class="prenotazioni__grid">
+        <!-- Date disponibili -->
+        <div class="prenotazioni__dates">
+          <p class="prenotazioni__label reveal">Prossime date</p>
+
+          <div class="date-list reveal">
+            <div class="date-item" data-date="2026-03-28" onclick="selectDate(this)">
+              <span class="date-item__day">28</span>
+              <div class="date-item__info">
+                <span class="date-item__month">Marzo 2026</span>
+                <span class="date-item__venue">Teatro Astra · Torino</span>
+              </div>
+              <span class="date-item__arrow">→</span>
+            </div>
+            <div class="date-item" data-date="2026-04-05" onclick="selectDate(this)">
+              <span class="date-item__day">05</span>
+              <div class="date-item__info">
+                <span class="date-item__month">Aprile 2026</span>
+                <span class="date-item__venue">Teatro Stabile · Torino</span>
+              </div>
+              <span class="date-item__arrow">→</span>
+            </div>
+            <div class="date-item" data-date="2026-04-12" onclick="selectDate(this)">
+              <span class="date-item__day">12</span>
+              <div class="date-item__info">
+                <span class="date-item__month">Aprile 2026</span>
+                <span class="date-item__venue">Atelier Teatro Fisico · Torino</span>
+              </div>
+              <span class="date-item__arrow">→</span>
+            </div>
+            <div class="date-item" data-date="2026-04-19" onclick="selectDate(this)">
+              <span class="date-item__day">19</span>
+              <div class="date-item__info">
+                <span class="date-item__month">Aprile 2026</span>
+                <span class="date-item__venue">Teatro Carignano · Torino</span>
+              </div>
+              <span class="date-item__arrow">→</span>
+            </div>
+            <div class="date-item" data-date="2026-05-02" onclick="selectDate(this)">
+              <span class="date-item__day">02</span>
+              <div class="date-item__info">
+                <span class="date-item__month">Maggio 2026</span>
+                <span class="date-item__venue">Teatro Colosseo · Torino</span>
+              </div>
+              <span class="date-item__arrow">→</span>
+            </div>
+          </div>
+
+          <div class="prenotazioni__ospitate reveal">
+            <p class="prenotazioni__ospitate-title">Vuoi ospitarci?</p>
+            <p class="prenotazioni__ospitate-body">Siamo disponibili per teatri, circoli ARCI, scuole e spazi non convenzionali.</p>
+            <!-- Sostituisci con il numero reale -->
+            <a href="https://wa.me/39XXXXXXXXXX?text=Ciao!%20Vorrei%20ospitare%20Oltre%20i%20Muri" target="_blank" class="btn btn--outline">Scrivici su WhatsApp</a>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <div class="prenotazioni__form">
+          <!--
+            FORMSPREE: vai su formspree.io → crea account → nuovo form →
+            sostituisci XXXXXX con il tuo ID nella action qui sotto
+          -->
+          <form id="booking-form" action="https://formspree.io/f/XXXXXX" method="POST" class="form reveal">
+            <input type="hidden" name="_subject" value="Prenotazione – Oltre i Muri" />
+            <input type="hidden" name="data_selezionata" id="hidden-date" />
+
+            <div class="form__field">
+              <label class="form__label">Nome completo</label>
+              <input type="text" name="nome" required class="form__input" placeholder="Es. Maria Rossi" />
+            </div>
+            <div class="form__field">
+              <label class="form__label">Email</label>
+              <input type="email" name="email" required class="form__input" placeholder="tua@email.com" />
+            </div>
+            <div class="form__field">
+              <label class="form__label">Data</label>
+              <input type="text" id="date-picker" name="data" class="form__input" placeholder="Seleziona una data" readonly />
+            </div>
+            <div class="form__field">
+              <label class="form__label">Posti</label>
+              <select name="posti" class="form__input form__select">
+                <option value="1">1 posto – 10€</option>
+                <option value="2" selected>2 posti – 20€</option>
+                <option value="3">3 posti – 30€</option>
+                <option value="4">4 posti – 40€</option>
+                <option value="ridotto">Ridotto (studenti/under18/over65) – 8€</option>
+                <option value="5+">5 o più – contattaci</option>
+              </select>
+            </div>
+            <div class="form__field">
+              <label class="form__label">Note</label>
+              <textarea name="note" class="form__input form__textarea" rows="3" placeholder="Richieste speciali, accessibilità…"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full">Invia prenotazione</button>
+            <p class="form__success" id="booking-success">Prenotazione ricevuta — ti scriviamo entro 24 ore.</p>
+          </form>
+
+          <div class="prenotazioni__cta-direct reveal">
+            <!-- Sostituisci con numero reale -->
+            <a href="tel:+39XXXXXXXXXX" class="btn btn--ghost btn--full">Chiama ora</a>
+            <a href="https://wa.me/39XXXXXXXXXX" target="_blank" class="btn btn--whatsapp btn--full">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
 
-  <!-- ══════════════════════════════════════════
-       DATE PASSATE
-  ══════════════════════════════════════════ -->
-  <section id="date-passate" class="py-28 px-8 lg:px-20 max-w-7xl mx-auto">
-    <div class="mb-12">
-      <p class="section-subtitle reveal">Storico</p>
-      <h2 class="section-title reveal reveal-delay-1">Date Passate</h2>
-      <div class="gold-divider reveal reveal-delay-2" style="margin-left:0"></div>
-      <p class="text-lunar-cream/50 mt-4 reveal reveal-delay-2" style="font-size:0.9rem; max-width:520px">
-        Oltre 25 repliche in tre anni. Una compagnia che le sale continuano a richiamare.
+  <!-- ══ 04 · DATE PASSATE ══ -->
+  <section class="section section--dark" id="date-passate">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">04</span>
+        <h2 class="section__title">Date Passate</h2>
+      </div>
+
+      <p class="date-passate__intro reveal">
+        Oltre 25 repliche in tre anni. Dal circolo di quartiere al teatro di proscenio.
       </p>
-    </div>
 
-    <div class="timeline-scroll reveal">
       <!--
-        ══ PER OGNI LOCANDINA:
-           1. Scarica il post/locandina da Instagram (salva come immagine)
-           2. Rinomina il file es. poster-1.jpg, poster-2.jpg ecc.
-           3. Sostituisci src="https://images.unsplash.com/..." con src="poster-1.jpg" ecc.
-        ══
+        LOCANDINE: per ogni data, scarica la locandina dal profilo Instagram
+        e salvala come public/assets/poster-N.jpg (es. poster-1.jpg, poster-2.jpg…)
+        Poi sostituisci ogni .photo-slot con <img src="/assets/poster-N.jpg" alt="...">
       -->
+      <div class="timeline-scroll reveal">
 
-      <!-- 1 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="Locandina Oltre i Muri – luglio 2022" loading="lazy" />
-        <!-- ══ src → 'poster-1.jpg' (locandina da Instagram) ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Lug 2022</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Debutto</p>
-          <p class="text-lunar-cream/60 text-xs">Atelier Teatro Fisico</p>
-          <p class="text-lunar-cream/40 text-xs">Via Carmagnola 12 · TO</p>
-          <span class="sold-out-badge mt-3 inline-block">Sold out</span>
+        <div class="timeline-card">
+          <div class="photo-slot photo-slot--poster">
+            <span class="photo-slot__label">Locandina<br/>debutto</span>
+          </div>
+          <div class="timeline-card__body">
+            <span class="timeline-card__sold-out">Sold out</span>
+            <p class="timeline-card__date">Luglio 2022</p>
+            <p class="timeline-card__venue">Atelier Teatro Fisico Philip Radice</p>
+            <p class="timeline-card__city">Via Carmagnola 12 · Torino</p>
+            <p class="timeline-card__note">Debutto</p>
+          </div>
         </div>
-      </div>
 
-      <!-- 2 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&q=80" alt="Locandina replica ottobre 2022" loading="lazy" />
-        <!-- ══ src → 'poster-2.jpg' ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Ott 2022</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Oltre i Muri</p>
-          <p class="text-lunar-cream/60 text-xs">Teatro Astra</p>
-          <p class="text-lunar-cream/40 text-xs">Torino</p>
-          <span class="sold-out-badge mt-3 inline-block">Sold out</span>
+        <div class="timeline-card">
+          <div class="photo-slot photo-slot--poster">
+            <span class="photo-slot__label">Locandina</span>
+          </div>
+          <div class="timeline-card__body">
+            <p class="timeline-card__date">Ottobre 2022</p>
+            <p class="timeline-card__venue">Teatro Astra</p>
+            <p class="timeline-card__city">Torino</p>
+          </div>
         </div>
-      </div>
 
-      <!-- 3 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1445991842772-097fea258e7b?w=400&q=80" alt="Locandina replica marzo 2023" loading="lazy" />
-        <!-- ══ src → 'poster-3.jpg' ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Mar 2023</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Oltre i Muri</p>
-          <p class="text-lunar-cream/60 text-xs">Teatro Bellarte</p>
-          <p class="text-lunar-cream/40 text-xs">Moncalieri · TO</p>
+        <div class="timeline-card">
+          <div class="photo-slot photo-slot--poster">
+            <span class="photo-slot__label">Locandina</span>
+          </div>
+          <div class="timeline-card__body">
+            <span class="timeline-card__sold-out">Sold out</span>
+            <p class="timeline-card__date">Novembre 2023</p>
+            <p class="timeline-card__venue">Kontiki</p>
+            <p class="timeline-card__city">Via Cigliano 7 · Torino</p>
+          </div>
         </div>
-      </div>
 
-      <!-- 4 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80" alt="Locandina replica maggio 2023" loading="lazy" />
-        <!-- ══ src → 'poster-4.jpg' ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Mag 2023</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Oltre i Muri</p>
-          <p class="text-lunar-cream/60 text-xs">Spazio Filadelfia</p>
-          <p class="text-lunar-cream/40 text-xs">Torino</p>
-          <span class="sold-out-badge mt-3 inline-block">Sold out</span>
+        <div class="timeline-card">
+          <div class="photo-slot photo-slot--poster">
+            <span class="photo-slot__label">Locandina</span>
+          </div>
+          <div class="timeline-card__body">
+            <p class="timeline-card__date">Marzo 2024</p>
+            <p class="timeline-card__venue">Laboratorio MalaErba</p>
+            <p class="timeline-card__city">Torino</p>
+          </div>
         </div>
-      </div>
 
-      <!-- 5 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80" alt="Locandina replica ottobre 2023" loading="lazy" />
-        <!-- ══ src → 'poster-5.jpg' ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Ott 2023</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Oltre i Muri</p>
-          <p class="text-lunar-cream/60 text-xs">Teatro Colosseo</p>
-          <p class="text-lunar-cream/40 text-xs">Torino</p>
-          <span class="sold-out-badge mt-3 inline-block">Sold out</span>
+        <div class="timeline-card">
+          <div class="photo-slot photo-slot--poster">
+            <span class="photo-slot__label">Locandina</span>
+          </div>
+          <div class="timeline-card__body">
+            <span class="timeline-card__sold-out">Sold out</span>
+            <p class="timeline-card__date">Aprile 2024</p>
+            <p class="timeline-card__venue">InStabile</p>
+            <p class="timeline-card__city">Firenze</p>
+          </div>
         </div>
-      </div>
 
-      <!-- 6 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=400&q=80" alt="Locandina replica marzo 2024" loading="lazy" />
-        <!-- ══ src → 'poster-6.jpg' ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Mar 2024</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Oltre i Muri</p>
-          <p class="text-lunar-cream/60 text-xs">Teatro Garybaldi</p>
-          <p class="text-lunar-cream/40 text-xs">Settimo Torinese</p>
+        <div class="timeline-card">
+          <div class="photo-slot photo-slot--poster">
+            <span class="photo-slot__label">Locandina</span>
+          </div>
+          <div class="timeline-card__body">
+            <p class="timeline-card__date">Ottobre 2024</p>
+            <p class="timeline-card__venue">Teatro Garybaldi</p>
+            <p class="timeline-card__city">Settimo Torinese</p>
+          </div>
         </div>
-      </div>
 
-      <!-- 7 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=400&q=80" alt="Locandina replica dicembre 2024" loading="lazy" />
-        <!-- ══ src → 'poster-7.jpg' ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Dic 2024</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Oltre i Muri</p>
-          <p class="text-lunar-cream/60 text-xs">Teatro Erba</p>
-          <p class="text-lunar-cream/40 text-xs">Torino</p>
-          <span class="sold-out-badge mt-3 inline-block">Sold out</span>
+        <div class="timeline-card">
+          <div class="photo-slot photo-slot--poster">
+            <span class="photo-slot__label">Locandina</span>
+          </div>
+          <div class="timeline-card__body">
+            <span class="timeline-card__sold-out">Sold out</span>
+            <p class="timeline-card__date">Maggio 2025</p>
+            <p class="timeline-card__venue">Atelier Teatro Fisico Philip Radice</p>
+            <p class="timeline-card__city">Via Carmagnola 12 · Torino</p>
+            <p class="timeline-card__note">Ritorno alle origini</p>
+          </div>
         </div>
-      </div>
 
-      <!-- 8 -->
-      <div class="timeline-card">
-        <img src="https://images.unsplash.com/photo-1549213783-8284d0336c4f?w=400&q=80" alt="Locandina replica maggio 2025" loading="lazy" />
-        <!-- ══ src → 'poster-8.jpg' (locandina da Instagram) ══ -->
-        <div class="p-4">
-          <p class="text-xs text-lunar-cream/30 tracking-widest uppercase mb-1">Mag 2025</p>
-          <p class="text-lunar-gold text-sm font-semibold mb-0.5" style="font-family:'Playfair Display',serif">Oltre i Muri</p>
-          <p class="text-lunar-cream/60 text-xs">Atelier Teatro Fisico</p>
-          <p class="text-lunar-cream/40 text-xs">Via Carmagnola 12 · TO</p>
-          <span class="sold-out-badge mt-3 inline-block">Sold out</span>
-        </div>
       </div>
-
     </div>
   </section>
 
-  <hr class="section-rule mx-8 lg:mx-20" />
 
-
-  <!-- ══════════════════════════════════════════
-       GALLERIA
-  ══════════════════════════════════════════ -->
-  <section id="galleria" class="py-28 px-8 lg:px-20 max-w-7xl mx-auto">
-    <div class="text-center mb-14">
-      <p class="section-subtitle reveal">Immagini</p>
-      <h2 class="section-title reveal reveal-delay-1">Galleria</h2>
-      <div class="gold-divider reveal reveal-delay-2"></div>
+  <!-- ══ 05 · GALLERIA ══ -->
+  <section class="section" id="galleria">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">05</span>
+        <h2 class="section__title">Galleria</h2>
+      </div>
     </div>
 
     <!--
-      ══ PER OGNI IMMAGINE GALLERY:
-         1. Scarica le foto di scena / backstage da Instagram
-         2. Salvale come gallery-1.jpg, gallery-2.jpg ecc.
-         3. Sostituisci ogni src="https://images.unsplash.com/..." con src="gallery-N.jpg"
-      ══
+      GALLERIA: scarica le foto di scena / backstage da Instagram.
+      Salva come public/assets/g1.jpg, g2.jpg … g9.jpg
+      Sostituisci ogni .photo-slot con <img src="/assets/gN.jpg" alt="...">
+      Clicca su qualsiasi foto per aprire il lightbox.
     -->
-    <div class="masonry reveal">
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=600&q=80" alt="Scena 1 – Oltre i Muri" loading="lazy" />
-        <!-- ══ src → 'gallery-1.jpg' ══ -->
+    <div class="gallery" id="gallery">
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 1</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80" alt="Scena 2" loading="lazy" />
-        <!-- ══ src → 'gallery-2.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 2</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=600&q=80" alt="Scena 3" loading="lazy" />
-        <!-- ══ src → 'gallery-3.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 3</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Scena 4" loading="lazy" />
-        <!-- ══ src → 'gallery-4.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 4</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80" alt="Scena 5" loading="lazy" />
-        <!-- ══ src → 'gallery-5.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 5</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80" alt="Scena 6" loading="lazy" />
-        <!-- ══ src → 'gallery-6.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 6</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1445991842772-097fea258e7b?w=600&q=80" alt="Scena 7" loading="lazy" />
-        <!-- ══ src → 'gallery-7.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 7</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1549213783-8284d0336c4f?w=600&q=80" alt="Scena 8" loading="lazy" />
-        <!-- ══ src → 'gallery-8.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 8</span></div>
       </div>
-      <div class="masonry-item" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&q=80" alt="Scena 9" loading="lazy" />
-        <!-- ══ src → 'gallery-9.jpg' ══ -->
+      <div class="gallery__item reveal" onclick="openLightbox(this)">
+        <div class="photo-slot photo-slot--gallery"><span class="photo-slot__label">Scena 9</span></div>
       </div>
     </div>
 
     <!-- Lightbox -->
-    <div id="lightbox" onclick="closeLightbox()">
-      <button onclick="closeLightbox()" style="position:absolute;top:1.5rem;right:2rem;color:#c0a070;font-size:2rem;background:none;border:none;cursor:pointer;z-index:10000">✕</button>
-      <img id="lightbox-img" src="" alt="" />
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+      <button class="lightbox__close" onclick="closeLightbox()">✕</button>
+      <img class="lightbox__img" id="lightbox-img" src="" alt="" />
     </div>
   </section>
 
-  <hr class="section-rule mx-8 lg:mx-20" />
 
-
-  <!-- ══════════════════════════════════════════
-       BLOG / RIFLESSIONI
-  ══════════════════════════════════════════ -->
-  <section id="blog" class="py-28 px-8 lg:px-20 max-w-7xl mx-auto">
-    <div class="text-center mb-14">
-      <p class="section-subtitle reveal">Parole</p>
-      <h2 class="section-title reveal reveal-delay-1">Riflessioni</h2>
-      <div class="gold-divider reveal reveal-delay-2"></div>
-      <p class="text-lunar-cream/40 mt-4 reveal reveal-delay-3 max-w-lg mx-auto" style="font-size:0.85rem">
-        Pensieri dal processo creativo, note di regia, appunti su femminismo e teatro.
-      </p>
-    </div>
-
-    <!--
-      ══ BLOG:
-         Per aggiungere nuovi post basta duplicare un .blog-card e modificare testo + immagine.
-         Per un CMS vero senza code: usa Notion (pubblica pagina) o Netlify CMS (file .md nella repo).
-      ══
-    -->
-    <div class="grid md:grid-cols-3 gap-6">
-
-      <!-- Post 1 -->
-      <article class="blog-card reveal">
-        <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=600&q=80" alt="Post 1" loading="lazy" />
-        <!-- ══ src → 'blog-1.jpg' (immagine copertina post) ══ -->
-        <div class="p-6">
-          <span class="blog-tag mb-3 inline-block">Processo creativo</span>
-          <h3 class="text-lunar-cream font-semibold leading-snug mb-3" style="font-family:'Playfair Display',serif; font-size:1.1rem">
-            Come nasce una scena: il corpo prima della parola
-          </h3>
-          <p class="text-lunar-cream/50 text-sm leading-relaxed mb-5">
-            Nel nostro metodo la parola arriva ultima. Prima c'è il silenzio, poi il respiro, poi il gesto. Ecco come lavoriamo in sala prove.
-          </p>
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-lunar-cream/30 tracking-wide">12 Gennaio 2026</span>
-            <!-- ══ href → URL del post reale ══ -->
-            <a href="#" class="text-xs text-lunar-gold tracking-widest uppercase hover:text-lunar-gold-light transition-colors">Leggi →</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Post 2 -->
-      <article class="blog-card reveal reveal-delay-1">
-        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80" alt="Post 2" loading="lazy" />
-        <!-- ══ src → 'blog-2.jpg' ══ -->
-        <div class="p-6">
-          <span class="blog-tag mb-3 inline-block">Femminismo e teatro</span>
-          <h3 class="text-lunar-cream font-semibold leading-snug mb-3" style="font-family:'Playfair Display',serif; font-size:1.1rem">
-            Isteria: la ribellione che hanno chiamato malattia
-          </h3>
-          <p class="text-lunar-cream/50 text-sm leading-relaxed mb-5">
-            Da Charcot a oggi: come il corpo femminile è stato patologizzato ogni volta che ha osato dissentire. Il punto di partenza drammaturgico di Oltre i Muri.
-          </p>
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-lunar-cream/30 tracking-wide">3 Febbraio 2026</span>
-            <!-- ══ href → URL del post reale ══ -->
-            <a href="#" class="text-xs text-lunar-gold tracking-widest uppercase hover:text-lunar-gold-light transition-colors">Leggi →</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Post 3 -->
-      <article class="blog-card reveal reveal-delay-2">
-        <img src="https://images.unsplash.com/photo-1445991842772-097fea258e7b?w=600&q=80" alt="Post 3" loading="lazy" />
-        <!-- ══ src → 'blog-3.jpg' ══ -->
-        <div class="p-6">
-          <span class="blog-tag mb-3 inline-block">Note di regia</span>
-          <h3 class="text-lunar-cream font-semibold leading-snug mb-3" style="font-family:'Playfair Display',serif; font-size:1.1rem">
-            Tre anni di Oltre i Muri: cosa abbiamo imparato
-          </h3>
-          <p class="text-lunar-cream/50 text-sm leading-relaxed mb-5">
-            Venticinque repliche, dodici teatri, centinaia di persone che ci hanno scritto. Amalia Stagnaro riflette sul viaggio di uno spettacolo che non finisce mai di crescere.
-          </p>
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-lunar-cream/30 tracking-wide">28 Febbraio 2026</span>
-            <!-- ══ href → URL del post reale ══ -->
-            <a href="#" class="text-xs text-lunar-gold tracking-widest uppercase hover:text-lunar-gold-light transition-colors">Leggi →</a>
-          </div>
-        </div>
-      </article>
-
-    </div>
-  </section>
-
-  <hr class="section-rule mx-8 lg:mx-20" />
-
-
-  <!-- ══════════════════════════════════════════
-       CONTATTI
-  ══════════════════════════════════════════ -->
-  <section id="contatti" class="py-28 px-8 lg:px-20 max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-2 gap-16">
-      <div>
-        <p class="section-subtitle reveal">Scrivici</p>
-        <h2 class="section-title reveal reveal-delay-1">Contatti</h2>
-        <div class="gold-divider reveal reveal-delay-2" style="margin-left:0"></div>
-
-        <p class="text-lunar-cream/55 mt-6 leading-relaxed reveal reveal-delay-2" style="font-size:0.95rem">
-          Per prenotazioni, ospitate, collaborazioni, interviste o semplicemente per dirci che lo spettacolo vi ha cambiato qualcosa — scriveteci. Rispondiamo sempre.
-        </p>
-
-        <div class="mt-10 space-y-5 reveal reveal-delay-3">
-          <div class="flex items-start gap-4">
-            <svg class="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0a070" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <div>
-              <p class="text-xs tracking-widest uppercase text-lunar-cream/30 mb-0.5">Sede</p>
-              <!-- ══ SOSTITUIRE con l'indirizzo reale se disponibile ══ -->
-              <p class="text-lunar-cream/70 text-sm">Torino, Piemonte · Italia</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <svg class="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0a070" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <div>
-              <p class="text-xs tracking-widest uppercase text-lunar-cream/30 mb-0.5">Email</p>
-              <!-- ══ SOSTITUIRE con l'email reale della compagnia ══ -->
-              <a href="mailto:info@chandrama.it" class="text-lunar-cream/70 text-sm hover:text-lunar-gold transition-colors">info@chandrama.it</a>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <svg class="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0a070" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.03 0h3a2 2 0 012 1.72c.12.9.37 1.79.71 2.64a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.44-1.44a2 2 0 012.11-.45c.85.34 1.74.59 2.64.71A2 2 0 0122 14.92v2z"/></svg>
-            <div>
-              <p class="text-xs tracking-widest uppercase text-lunar-cream/30 mb-0.5">Telefono</p>
-              <!-- ══ SOSTITUIRE con il numero reale ══ -->
-              <a href="tel:+39XXXXXXXXXX" class="text-lunar-cream/70 text-sm hover:text-lunar-gold transition-colors">+39 XXX XXX XXXX</a>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <svg class="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0a070" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="#c0a070"/></svg>
-            <div>
-              <p class="text-xs tracking-widest uppercase text-lunar-cream/30 mb-0.5">Instagram</p>
-              <a href="https://instagram.com/compagnia.chandrama" target="_blank" rel="noopener" class="text-lunar-cream/70 text-sm hover:text-lunar-gold transition-colors">@compagnia.chandrama</a>
-            </div>
-          </div>
-        </div>
+  <!-- ══ 06 · BLOG ══ -->
+  <section class="section section--dark" id="blog">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">06</span>
+        <h2 class="section__title">Riflessioni</h2>
       </div>
 
-      <!-- Form contatto -->
-      <div>
-        <!-- ══ FORMSPREE: stesso account, ma crea un secondo form ("Contatto generico") ══ -->
-        <form
-          id="contact-form"
-          action="https://formspree.io/f/YYYYYY"
-          method="POST"
-          class="space-y-5 reveal reveal-delay-1"
-          onsubmit="handleFormSubmit(event, 'contact-form')"
-        >
-          <input type="hidden" name="_subject" value="Contatto – Compagnia Chāndrama" />
-          <div>
-            <label class="form-label">Nome</label>
-            <input type="text" name="nome" required class="form-input" placeholder="Il tuo nome" />
+      <!--
+        BLOG: aggiungi nuovi post duplicando un .blog-card.
+        Per immagini: public/assets/blog-N.jpg
+        Per un CMS semplice: usa Netlify CMS (file .md nella repo)
+        o pubblica su Notion e linka "Leggi →"
+      -->
+      <div class="blog-grid">
+
+        <article class="blog-card reveal">
+          <div class="blog-card__img">
+            <div class="photo-slot photo-slot--blog"><span class="photo-slot__label">Foto post 1</span></div>
           </div>
-          <div>
-            <label class="form-label">Email</label>
-            <input type="email" name="email" required class="form-input" placeholder="tua@email.com" />
+          <div class="blog-card__body">
+            <span class="blog-card__tag">Processo creativo</span>
+            <h3 class="blog-card__title">Come nasce una scena: il corpo prima della parola</h3>
+            <p class="blog-card__excerpt">Nel nostro metodo la parola arriva ultima. Prima c'è il silenzio, poi il respiro, poi il gesto.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__date">12 Gen 2026</span>
+              <a href="#" class="blog-card__link">Leggi →</a>
+            </div>
           </div>
-          <div>
-            <label class="form-label">Oggetto</label>
-            <select name="oggetto" class="form-input">
-              <option value="prenotazione">Prenotazione spettacolo</option>
-              <option value="ospitata">Proposta ospitata / collaborazione</option>
-              <option value="stampa">Stampa / comunicazione</option>
-              <option value="altro">Altro</option>
-            </select>
+        </article>
+
+        <article class="blog-card reveal">
+          <div class="blog-card__img">
+            <div class="photo-slot photo-slot--blog"><span class="photo-slot__label">Foto post 2</span></div>
           </div>
-          <div>
-            <label class="form-label">Messaggio</label>
-            <textarea name="messaggio" required class="form-input" rows="5" placeholder="Raccontaci…"></textarea>
+          <div class="blog-card__body">
+            <span class="blog-card__tag">Femminismo e teatro</span>
+            <h3 class="blog-card__title">Isteria: la ribellione che hanno chiamato malattia</h3>
+            <p class="blog-card__excerpt">Da Charcot a oggi — come il corpo femminile è stato patologizzato ogni volta che ha osato dissentire.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__date">3 Feb 2026</span>
+              <a href="#" class="blog-card__link">Leggi →</a>
+            </div>
           </div>
-          <button type="submit" class="btn-gold-fill w-full justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-            Invia messaggio
-          </button>
-          <div id="contact-success" class="form-success">
-            Messaggio inviato — ti risponderemo presto.
+        </article>
+
+        <article class="blog-card reveal">
+          <div class="blog-card__img">
+            <div class="photo-slot photo-slot--blog"><span class="photo-slot__label">Foto post 3</span></div>
           </div>
-        </form>
+          <div class="blog-card__body">
+            <span class="blog-card__tag">Note di regia</span>
+            <h3 class="blog-card__title">Tre anni di Oltre i Muri: cosa abbiamo imparato</h3>
+            <p class="blog-card__excerpt">Venticinque repliche, decine di teatri, centinaia di persone che ci hanno scritto dopo.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__date">28 Feb 2026</span>
+              <a href="#" class="blog-card__link">Leggi →</a>
+            </div>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
 
 
-  <!-- ══════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════ -->
-  <footer class="border-t border-lunar-gold/10 py-14 px-8 lg:px-20">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+  <!-- ══ 07 · CONTATTI ══ -->
+  <section class="section" id="contatti">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">07</span>
+        <h2 class="section__title">Contatti</h2>
+      </div>
 
-      <!-- Logo footer -->
-      <a href="#hero" class="logo-wrap">
-        <img src="logo bassa qualità.png" alt="Chāndrama" style="height:30px; width:auto; object-fit:contain; filter: brightness(1.1);" />
-        <span class="logo-text text-base">Chāndrama</span>
+      <div class="contatti__grid">
+        <div class="contatti__info">
+          <p class="contatti__intro reveal">
+            Per prenotazioni, ospitate, collaborazioni, stampa — scriveteci. Rispondiamo sempre.
+          </p>
+
+          <ul class="contatti__list reveal">
+            <li>
+              <span class="contatti__list-label">Sede</span>
+              <!-- Sostituisci con indirizzo reale se disponibile -->
+              <span class="contatti__list-value">Torino, Piemonte</span>
+            </li>
+            <li>
+              <span class="contatti__list-label">Email</span>
+              <!-- Sostituisci con email reale della compagnia -->
+              <a href="mailto:info@chandrama.it" class="contatti__list-value contatti__list-link">info@chandrama.it</a>
+            </li>
+            <li>
+              <span class="contatti__list-label">Telefono</span>
+              <!-- Sostituisci con numero reale -->
+              <a href="tel:+39XXXXXXXXXX" class="contatti__list-value contatti__list-link">+39 XXX XXX XXXX</a>
+            </li>
+            <li>
+              <span class="contatti__list-label">Instagram</span>
+              <a href="https://instagram.com/compagnia.chandrama" target="_blank" rel="noopener" class="contatti__list-value contatti__list-link">@compagnia.chandrama</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="contatti__form">
+          <!--
+            FORMSPREE: sostituisci YYYYYY con il tuo secondo form ID
+            (o usa lo stesso XXXXXX di prima se vuoi un unico form)
+          -->
+          <form id="contact-form" action="https://formspree.io/f/YYYYYY" method="POST" class="form reveal">
+            <input type="hidden" name="_subject" value="Contatto – Compagnia Chāndrama" />
+            <div class="form__field">
+              <label class="form__label">Nome</label>
+              <input type="text" name="nome" required class="form__input" placeholder="Il tuo nome" />
+            </div>
+            <div class="form__field">
+              <label class="form__label">Email</label>
+              <input type="email" name="email" required class="form__input" placeholder="tua@email.com" />
+            </div>
+            <div class="form__field">
+              <label class="form__label">Oggetto</label>
+              <select name="oggetto" class="form__input form__select">
+                <option value="prenotazione">Prenotazione</option>
+                <option value="ospitata">Ospitata / collaborazione</option>
+                <option value="stampa">Stampa / comunicazione</option>
+                <option value="altro">Altro</option>
+              </select>
+            </div>
+            <div class="form__field">
+              <label class="form__label">Messaggio</label>
+              <textarea name="messaggio" required class="form__input form__textarea" rows="5" placeholder="Raccontaci…"></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary btn--full">Invia</button>
+            <p class="form__success" id="contact-success">Messaggio ricevuto — ti risponderemo presto.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <a href="#hero" class="footer__logo">
+        <img src="/logo.png" alt="Chāndrama" />
+        <span>Chāndrama</span>
       </a>
-
-      <!-- Nav footer -->
-      <nav class="flex flex-wrap justify-center gap-6">
-        <a href="#chi-siamo" class="text-xs tracking-widest uppercase text-lunar-cream/30 hover:text-lunar-gold transition-colors">Chi siamo</a>
-        <a href="#spettacolo" class="text-xs tracking-widest uppercase text-lunar-cream/30 hover:text-lunar-gold transition-colors">Spettacolo</a>
-        <a href="#prenotazioni" class="text-xs tracking-widest uppercase text-lunar-cream/30 hover:text-lunar-gold transition-colors">Prenota</a>
-        <a href="#blog" class="text-xs tracking-widest uppercase text-lunar-cream/30 hover:text-lunar-gold transition-colors">Blog</a>
-        <a href="#contatti" class="text-xs tracking-widest uppercase text-lunar-cream/30 hover:text-lunar-gold transition-colors">Contatti</a>
+      <p class="footer__tagline">Teatro transfemminista · Torino</p>
+      <nav class="footer__nav">
+        <a href="#spettacolo">Spettacolo</a>
+        <a href="#prenotazioni">Prenota</a>
+        <a href="#galleria">Galleria</a>
+        <a href="#blog">Blog</a>
+        <a href="#contatti">Contatti</a>
       </nav>
-
-      <!-- Social + copyright -->
-      <div class="flex flex-col items-center md:items-end gap-3">
-        <a href="https://instagram.com/compagnia.chandrama" target="_blank" rel="noopener" class="flex items-center gap-2 text-xs tracking-widest uppercase text-lunar-cream/30 hover:text-lunar-gold transition-colors">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
-          Instagram
-        </a>
-        <p class="text-xs text-lunar-cream/20 tracking-wide">© 2026 Compagnia Chāndrama · Torino</p>
-        <p class="text-xs text-lunar-cream/15" style="font-size:0.6rem; letter-spacing:0.05em">Chāndrama — "splendente come la luna" (sanscrito)</p>
-      </div>
-
+      <a href="https://instagram.com/compagnia.chandrama" target="_blank" rel="noopener" class="footer__ig">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+        @compagnia.chandrama
+      </a>
+      <p class="footer__copy">© 2026 Compagnia Chāndrama · Chāndrama = "splendente come la luna" (sanscrito)</p>
     </div>
   </footer>
 
 
-  <!-- ══════════════════════════════════════════
-       FLOATING CTA
-  ══════════════════════════════════════════ -->
-  <div id="floating-cta">
-    <!-- ══ SOSTITUIRE i numeri placeholder con quelli reali ══ -->
-    <a href="tel:+39XXXXXXXXXX" class="float-btn float-phone">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.03 0h3a2 2 0 012 1.72c.12.9.37 1.79.71 2.64a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.44-1.44a2 2 0 012.11-.45c.85.34 1.74.59 2.64.71A2 2 0 0122 14.92v2z"/></svg>
-      Chiama ora
+  <!-- ══ FLOATING CTA ══ -->
+  <div class="floating-cta" id="floating-cta">
+    <!-- Sostituisci numero reale -->
+    <a href="tel:+39XXXXXXXXXX" class="floating-cta__btn floating-cta__btn--phone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.03 0h3a2 2 0 012 1.72c.12.9.37 1.79.71 2.64a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.44-1.44a2 2 0 012.11-.45c.85.34 1.74.59 2.64.71A2 2 0 0122 14.92v2z"/></svg>
+      Chiama
     </a>
-    <a href="https://wa.me/39XXXXXXXXXX" target="_blank" class="float-btn float-wa">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <a href="https://wa.me/39XXXXXXXXXX" target="_blank" class="floating-cta__btn floating-cta__btn--wa">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp
     </a>
   </div>
 
-
-  <!-- ══════════════════════════════════════════
-       JAVASCRIPT
-  ══════════════════════════════════════════ -->
-  <script>
-    /* ── Alpine store ── */
-    function siteApp() {
-      return {
-        menuOpen: false,
-        onScroll() {
-          const nav = document.getElementById('navbar');
-          if (window.scrollY > 60) {
-            nav.classList.add('scrolled');
-          } else {
-            nav.classList.remove('scrolled');
-          }
-        }
-      }
-    }
-
-    /* ── GSAP Hero ── */
-    gsap.registerPlugin(ScrollTrigger);
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const tl = gsap.timeline({ delay: 0.3 });
-      tl.to('#h-tagline', { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' })
-        .to('#h-title',   { y: 0, opacity: 1, duration: 1,   ease: 'power3.out' }, '-=0.5')
-        .to('#h-show',    { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.6')
-        .to('#h-sub',     { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.5')
-        .to('#h-cta',     { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.4');
-
-      /* Hero parallax */
-      gsap.to('#hero-bg', {
-        yPercent: 25,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#hero',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true
-        }
-      });
-
-      /* Reveal on scroll */
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
-
-      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-      /* Flatpickr date picker */
-      flatpickr('#date-picker', {
-        locale: 'it',
-        dateFormat: 'd M Y',
-        minDate: 'today',
-        enable: [
-          '2026-03-28',
-          '2026-04-05',
-          '2026-04-12',
-          '2026-04-19',
-          '2026-05-02',
-        ],
-        onChange: function(selectedDates, dateStr) {
-          document.getElementById('selected-date-input').value = dateStr;
-          // sync with date pills
-          document.querySelectorAll('.date-pill').forEach(p => {
-            p.classList.toggle('active', p.dataset.date === selectedDates[0]?.toISOString().split('T')[0]);
-          });
-        }
-      });
-    });
-
-    /* ── Date pill selector ── */
-    function selectDate(pill) {
-      document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      const fp = document.getElementById('date-picker')._flatpickr;
-      if (fp) fp.setDate(pill.dataset.date);
-    }
-
-    /* ── Form submit (Formspree async) ── */
-    async function handleFormSubmit(e, formId) {
-      e.preventDefault();
-      const form = document.getElementById(formId);
-      const successEl = document.getElementById(
-        formId === 'booking-form' ? 'booking-success' : 'contact-success'
-      );
-      const btn = form.querySelector('button[type="submit"]');
-      btn.textContent = 'Invio in corso…';
-      btn.disabled = true;
-
-      try {
-        const res = await fetch(form.action, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { Accept: 'application/json' }
-        });
-        if (res.ok) {
-          form.reset();
-          successEl.style.display = 'block';
-          btn.textContent = 'Inviato ✓';
-        } else {
-          btn.textContent = 'Errore – riprova';
-          btn.disabled = false;
-        }
-      } catch {
-        btn.textContent = 'Errore – riprova';
-        btn.disabled = false;
-      }
-    }
-
-    /* ── Lightbox ── */
-    function openLightbox(el) {
-      const src = el.querySelector('img').src;
-      document.getElementById('lightbox-img').src = src;
-      document.getElementById('lightbox').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeLightbox() {
-      document.getElementById('lightbox').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
-  </script>
-
-
-  <!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║           ISTRUZIONI PER TE – COMPAGNIA CHĀNDRAMA                  ║
-  ╠══════════════════════════════════════════════════════════════════════╣
-  ║                                                                      ║
-  ║  1. SOSTITUIRE LE IMMAGINI                                           ║
-  ║  ─────────────────────────                                           ║
-  ║  Cerca nel codice i commenti che iniziano con ══ SOSTITUIRE ══       ║
-  ║  Per ogni immagine:                                                  ║
-  ║  a) Scarica la foto dal tuo profilo Instagram (tieni premuto →       ║
-  ║     "Salva" su mobile, oppure scarica da browser su desktop)         ║
-  ║  b) Rinomina il file come indicato (es. hero.jpg, amalia.jpg…)      ║
-  ║  c) Mettilo nella stessa cartella di index.html                      ║
-  ║  d) Sostituisci l'URL Unsplash con il nome del file locale           ║
-  ║                                                                      ║
-  ║  2. COLLEGARE I FORM (FORMSPREE – GRATUITO)                          ║
-  ║  ──────────────────────────────────────────                          ║
-  ║  a) Vai su https://formspree.io e crea un account gratuito           ║
-  ║  b) Crea un nuovo form → copia l'ID (formato: xpwzabcd)             ║
-  ║  c) Nel codice cerca "formspree.io/f/XXXXXX" e sostituisci           ║
-  ║     XXXXXX con il tuo ID (form prenotazione)                         ║
-  ║  d) Cerca "formspree.io/f/YYYYYY" e sostituisci YYYYYY              ║
-  ║     con l'ID del form contatti (puoi usarne uno solo se vuoi)        ║
-  ║  e) Le email arriveranno direttamente nella tua casella              ║
-  ║                                                                      ║
-  ║  3. AGGIUNGERE NUMERI DI TELEFONO / WHATSAPP                         ║
-  ║  ────────────────────────────────────────────                        ║
-  ║  Cerca "+39XXXXXXXXXX" nel codice e sostituisci con il               ║
-  ║  numero reale della compagnia (formato: +393401234567)               ║
-  ║  Per WhatsApp: nel link wa.me/ usa il numero senza spazi             ║
-  ║                                                                      ║
-  ║  4. PUBBLICARE SU VERCEL (consigliato)                               ║
-  ║  ─────────────────────────────────────                               ║
-  ║  a) Assicurati di avere Node.js installato                           ║
-  ║  b) Dalla cartella del sito:                                         ║
-  ║       npx vercel                                                     ║
-  ║  c) Segui le istruzioni → ottieni URL tipo chandrama.vercel.app      ║
-  ║  d) Per dominio custom (es. chandrama.it):                           ║
-  ║       vercel domains add chandrama.it                                ║
-  ║                                                                      ║
-  ║  5. PUBBLICARE SU NETLIFY (alternativa drag & drop)                  ║
-  ║  ─────────────────────────────────────────────────                   ║
-  ║  a) Vai su https://netlify.com                                       ║
-  ║  b) Trascina l'intera cartella del sito nel browser                  ║
-  ║  c) Online in 30 secondi                                             ║
-  ║                                                                      ║
-  ║  6. AGGIUNGERE POST AL BLOG                                          ║
-  ║  ─────────────────────────                                           ║
-  ║  Duplica uno dei blocchi <article class="blog-card"> nel codice      ║
-  ║  e modifica testo, data e immagine. Per un CMS completo:             ║
-  ║  - Netlify CMS (gratuito, file .md nella repo GitHub)                ║
-  ║  - Notion → pubblica pagina e linka da "Leggi →"                    ║
-  ║                                                                      ║
-  ╚══════════════════════════════════════════════════════════════════════╝
-  -->
-
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
