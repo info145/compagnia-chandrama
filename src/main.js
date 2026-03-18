@@ -247,7 +247,8 @@ function initActressModal() {
     document.getElementById('actressImg').alt          = card.dataset.name || ''
 
     const toParas = str => (str || '')
-      .split(/\.(?:\s+)/)
+      .replace(/\\n\\n/g, '\n\n')
+      .split(/\n\n|(?<=\.)\s{2,}/)
       .map(s => s.trim()).filter(Boolean)
       .map(s => `<p>${s}${s.endsWith('.') ? '' : '.'}</p>`).join('')
 
@@ -294,7 +295,7 @@ function initArticleModal() {
     document.getElementById('articleImg').alt           = card.dataset.title || ''
 
     document.getElementById('articleBody').innerHTML = (card.dataset.content || '')
-      .split('\n\n').map(p => `<p>${p.trim()}</p>`).join('')
+      .split(/\\n\\n|\n\n/).map(p => `<p>${p.trim()}</p>`).filter(p => p !== '<p></p>').join('')
 
     modal.classList.add('is-open')
     document.body.style.overflow = 'hidden'
