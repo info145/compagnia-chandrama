@@ -234,6 +234,50 @@ function initLightbox() {
 }
 
 /* ════════════════════════════════════════════════════
+   ARTICLE MODAL
+   ════════════════════════════════════════════════════ */
+window.openArticle = function(card) {
+  const modal   = document.getElementById('articleModal')
+  const title   = card.dataset.title   || ''
+  const tag     = card.dataset.tag     || ''
+  const date    = card.dataset.date    || ''
+  const img     = card.dataset.img     || ''
+  const content = card.dataset.content || ''
+
+  document.getElementById('articleTitle').textContent = title
+  document.getElementById('articleTag').textContent   = tag
+  document.getElementById('articleDate').textContent  = date
+  document.getElementById('articleImg').src           = img
+  document.getElementById('articleImg').alt           = title
+
+  const bodyEl = document.getElementById('articleBody')
+  bodyEl.innerHTML = content
+    .split('\n\n')
+    .map(p => `<p>${p.trim()}</p>`)
+    .join('')
+
+  modal.classList.add('is-open')
+  document.body.style.overflow = 'hidden'
+}
+
+window.closeArticle = function(e) {
+  if (e && e.target !== document.getElementById('articleModal') && !e.target.classList.contains('article-modal__close')) return
+  const modal = document.getElementById('articleModal')
+  modal.classList.remove('is-open')
+  document.body.style.overflow = ''
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('articleModal')
+    if (modal?.classList.contains('is-open')) {
+      modal.classList.remove('is-open')
+      document.body.style.overflow = ''
+    }
+  }
+})
+
+/* ════════════════════════════════════════════════════
    INIT
    ════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
