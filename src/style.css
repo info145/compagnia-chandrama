@@ -123,9 +123,10 @@ body::before {
   flex-shrink: 0;
 }
 .nav__logo img {
-  height: 40px;
+  height: 56px;
   width: auto;
   object-fit: contain;
+  display: block;
 }
 .nav__links {
   display: flex;
