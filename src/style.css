@@ -1056,13 +1056,11 @@ body::before {
    ════════════════════════════════════════════════════ */
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: var(--c-border);
 }
-.blog-card { grid-column: span 2; }
-.blog-card:nth-child(4) { grid-column: 2 / 4; }
-.blog-card:nth-child(5) { grid-column: 4 / 6; }
+.blog-card:nth-child(10) { grid-column: 2 / 3; }
 .blog-card {
   background: var(--c-bg-2);
   display: flex;
@@ -1144,9 +1142,7 @@ body::before {
 @media (max-width: 768px) {
   .blog-grid { grid-template-columns: 1fr; }
   .blog-card,
-  .blog-card:nth-child(4),
-  .blog-card:nth-child(5),
-  .blog-card--reel { grid-column: 1 / -1; }
+  .blog-card:nth-child(10) { grid-column: 1 / -1; }
 }
 
 
