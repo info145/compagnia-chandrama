@@ -612,6 +612,16 @@ body::before {
   transition: filter 0.3s;
 }
 .spettacolo__scene-img:hover { filter: brightness(1); }
+.spettacolo__reel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: #000;
+}
+.spettacolo__reel .instagram-media {
+  margin: 0 auto !important;
+  width: 100% !important;
+}
 
 .video-placeholder {
   background: var(--c-bg-3);
