@@ -124,11 +124,11 @@ function initDatePicker() {
     locale: Italian,
     dateFormat: 'j F Y',
     enable: [
-      '2026-03-28',
+      '2026-03-20',
+      '2026-03-21',
       '2026-04-05',
       '2026-04-12',
       '2026-04-19',
-      '2026-05-02',
     ],
     onChange: (dates, dateStr, instance) => {
       const isoDate = dates[0]?.toISOString().split('T')[0]

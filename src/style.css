@@ -316,7 +316,7 @@ body::before {
 .hero__show-dash { color: var(--c-red); font-size: 1.2rem; }
 .hero__show-name {
   font-family: var(--f-serif);
-  font-style: italic;
+
   font-size: clamp(1.3rem, 3vw, 2rem);
   color: var(--c-fg);
   letter-spacing: 0.02em;
@@ -501,7 +501,7 @@ body::before {
 }
 .chi-siamo__bio {
   font-family: var(--f-serif);
-  font-style: italic;
+
   font-size: clamp(1.2rem, 2.5vw, 1.6rem);
   line-height: 1.5;
   color: var(--c-fg);
@@ -539,7 +539,7 @@ body::before {
 }
 .spettacolo__quote {
   font-family: var(--f-serif);
-  font-style: italic;
+
   font-size: clamp(1.1rem, 2.5vw, 1.5rem);
   line-height: 1.6;
   color: var(--c-fg);
@@ -656,7 +656,7 @@ body::before {
 }
 .cast__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: var(--c-border);
 }
@@ -666,6 +666,18 @@ body::before {
   transition: background 0.2s;
 }
 .cast-card:hover { background: var(--c-bg-3); }
+.cast-card__img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: grayscale(20%) brightness(0.85);
+  transition: filter 0.35s ease;
+}
+.cast-card:hover .cast-card__img {
+  filter: grayscale(0%) brightness(1);
+}
 .cast-card .photo-slot--portrait { filter: grayscale(20%); transition: filter 0.3s; }
 .cast-card:hover .photo-slot--portrait { filter: grayscale(0%); }
 .cast-card__info {
@@ -870,6 +882,16 @@ body::before {
   flex-direction: column;
 }
 .timeline-card:hover { background: var(--c-bg-3); }
+.timeline-card__poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: brightness(0.85);
+  transition: filter 0.3s;
+}
+.timeline-card:hover .timeline-card__poster { filter: brightness(1); }
 .timeline-card__body { padding: 1rem; flex: 1; }
 .timeline-card__sold-out {
   display: inline-block;
@@ -905,7 +927,7 @@ body::before {
   font-size: 0.65rem;
   color: var(--c-red);
   margin-top: 0.5rem;
-  font-style: italic;
+
   font-family: var(--f-serif);
 }
 
@@ -1084,7 +1106,7 @@ body::before {
   line-height: 1.8;
   margin-bottom: 2.5rem;
   font-family: var(--f-serif);
-  font-style: italic;
+
 }
 .contatti__list {
   display: flex;
@@ -1240,7 +1262,7 @@ body::before {
    UTILITY
    ════════════════════════════════════════════════════ */
 @media (max-width: 600px) {
-  .cast__grid { grid-template-columns: repeat(2, 1fr); }
+  .cast__grid { grid-template-columns: repeat(3, 1fr); }
   .stat { padding: 1rem 0.5rem; }
   .stat__num { font-size: 1.8rem; }
   .floating-cta__btn span:not(svg) { display: none; }
