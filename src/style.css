@@ -44,6 +44,35 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; border: none; background: none; font: inherit; }
 ul { list-style: none; }
 
+/* ── Logo branding ── */
+.hero__brand-logo {
+  position: absolute;
+  bottom: 2.5rem;
+  left: var(--pad-x);
+  height: 52px;
+  width: auto;
+  opacity: 0.18;
+  filter: invert(1) brightness(2);
+  z-index: 10;
+  pointer-events: none;
+}
+.section__brand-logo {
+  display: block;
+  height: 44px;
+  width: auto;
+  opacity: 0.12;
+  filter: invert(1) brightness(2);
+  margin-top: 3rem;
+  pointer-events: none;
+}
+.footer__brand-logo {
+  height: 72px;
+  width: auto;
+  opacity: 0.2;
+  filter: invert(1) brightness(2);
+  pointer-events: none;
+}
+
 /* ── Film grain overlay ── */
 body::before {
   content: '';
@@ -1101,6 +1130,95 @@ body::before {
 .blog-card__link:hover { letter-spacing: 0.25em; }
 @media (max-width: 768px) {
   .blog-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ════════════════════════════════════════════════════
+   SOSTIENICI
+   ════════════════════════════════════════════════════ */
+.sostienici { background: var(--c-bg-2); }
+.sostienici__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+.sostienici__statement {
+  font-family: var(--f-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--c-fg);
+  letter-spacing: 0.02em;
+  margin-bottom: 2rem;
+}
+.sostienici__body {
+  font-size: 0.95rem;
+  color: var(--c-muted);
+  line-height: 1.85;
+  margin-bottom: 1.2rem;
+}
+.sostienici__body strong { color: var(--c-fg); font-weight: 600; }
+
+.sostienici__cta-box {
+  border: 1px solid var(--c-border-2);
+  background: var(--c-bg-3);
+}
+.sostienici__incident { padding: 2rem; }
+.sostienici__incident-label {
+  display: inline-block;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--c-bg);
+  background: var(--c-red);
+  padding: 3px 10px;
+  margin-bottom: 1.2rem;
+}
+.sostienici__incident-title {
+  font-family: var(--f-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--c-fg);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+.sostienici__incident-body {
+  font-size: 0.88rem;
+  color: var(--c-muted);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+.sostienici__progress { margin-bottom: 1.5rem; }
+.sostienici__progress-bar {
+  height: 3px;
+  background: var(--c-border-2);
+  margin-bottom: 0.6rem;
+}
+.sostienici__progress-fill {
+  height: 100%;
+  background: var(--c-red);
+  transition: width 1s ease;
+}
+.sostienici__progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+.sostienici__progress-raised { color: var(--c-red); font-weight: 700; }
+.sostienici__progress-supporters { color: var(--c-muted); }
+.sostienici__note {
+  font-size: 0.62rem;
+  color: var(--c-muted);
+  text-align: center;
+  margin-top: 0.8rem;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .sostienici__grid { grid-template-columns: 1fr; gap: 3rem; }
 }
 
 
