@@ -1282,6 +1282,138 @@ body::before {
 
 
 /* ════════════════════════════════════════════════════
+   CAST CARD — clickable
+   ════════════════════════════════════════════════════ */
+.cast-card { cursor: pointer; position: relative; }
+.cast-card__cta {
+  display: block;
+  text-align: center;
+  font-family: var(--f-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--c-red);
+  padding: 0.5rem 0 0.6rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.cast-card:hover .cast-card__cta { opacity: 1; }
+
+/* ════════════════════════════════════════════════════
+   ACTRESS MODAL
+   ════════════════════════════════════════════════════ */
+.actress-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  padding: 1.5rem;
+}
+.actress-modal.is-open {
+  opacity: 1;
+  pointer-events: all;
+}
+.actress-modal__panel {
+  background: var(--c-bg-2);
+  border: 1px solid var(--c-border);
+  width: 100%;
+  max-width: 820px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  position: relative;
+  transform: scale(0.96);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.actress-modal.is-open .actress-modal__panel { transform: scale(1); }
+.actress-modal__close {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  z-index: 2;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--c-border);
+  color: var(--c-fg);
+  width: 2.2rem; height: 2.2rem;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.actress-modal__close:hover { background: var(--c-red); }
+.actress-modal__photo {
+  position: sticky;
+  top: 0;
+  height: 100%;
+  overflow: hidden;
+}
+.actress-modal__photo img {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  filter: grayscale(15%);
+}
+.actress-modal__content {
+  padding: 2.5rem 2rem 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.actress-modal__role {
+  font-family: var(--f-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-red);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.actress-modal__name {
+  font-family: var(--f-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.1;
+  color: var(--c-fg);
+  margin-bottom: 1.2rem;
+}
+.actress-modal__divider {
+  width: 2.5rem;
+  height: 2px;
+  background: var(--c-red);
+  margin-bottom: 1.4rem;
+}
+.actress-modal__fun {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-bottom: 1.4rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--c-border);
+}
+.actress-modal__bio {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+@media (max-width: 600px) {
+  .actress-modal__panel {
+    grid-template-columns: 1fr;
+    max-height: 85vh;
+  }
+  .actress-modal__photo img { min-height: 260px; height: 260px; }
+  .actress-modal__content { padding: 1.5rem; }
+}
+
+/* ════════════════════════════════════════════════════
    ARTICLE MODAL
    ════════════════════════════════════════════════════ */
 .article-modal {

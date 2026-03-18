@@ -234,6 +234,46 @@ function initLightbox() {
 }
 
 /* ════════════════════════════════════════════════════
+   ACTRESS MODAL
+   ════════════════════════════════════════════════════ */
+window.openActress = function(card) {
+  const modal = document.getElementById('actressModal')
+  document.getElementById('actressName').textContent = card.dataset.name || ''
+  document.getElementById('actressRole').textContent = card.dataset.role || ''
+  document.getElementById('actressImg').src           = card.dataset.img  || ''
+  document.getElementById('actressImg').alt           = card.dataset.name || ''
+
+  const funEl = document.getElementById('actressFun')
+  funEl.innerHTML = (card.dataset.fun || '')
+    .split('. ')
+    .filter(s => s.trim())
+    .map(s => `<p>${s.trim()}${s.endsWith('.') ? '' : '.'}</p>`)
+    .join('')
+
+  const bioEl = document.getElementById('actressBio')
+  const bio = card.dataset.bio || ''
+  bioEl.innerHTML = bio
+    ? bio.split('. ').filter(s => s.trim()).map(s => `<p>${s.trim()}${s.endsWith('.') ? '' : '.'}</p>`).join('')
+    : ''
+
+  modal.classList.add('is-open')
+  document.body.style.overflow = 'hidden'
+}
+
+window.closeActress = function(e) {
+  if (e && e.target !== document.getElementById('actressModal') && !e.target.classList.contains('actress-modal__close')) return
+  document.getElementById('actressModal').classList.remove('is-open')
+  document.body.style.overflow = ''
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const am = document.getElementById('actressModal')
+    if (am?.classList.contains('is-open')) { am.classList.remove('is-open'); document.body.style.overflow = '' }
+  }
+})
+
+/* ════════════════════════════════════════════════════
    ARTICLE MODAL
    ════════════════════════════════════════════════════ */
 window.openArticle = function(card) {
