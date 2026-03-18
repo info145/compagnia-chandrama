@@ -579,6 +579,17 @@ body::before {
 }
 .credit-value { color: var(--c-fg); text-align: right; }
 
+.spettacolo__scene-img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: brightness(0.9);
+  transition: filter 0.3s;
+}
+.spettacolo__scene-img:hover { filter: brightness(1); }
+
 .video-placeholder {
   background: var(--c-bg-3);
   aspect-ratio: 16/9;
