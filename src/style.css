@@ -127,6 +127,7 @@ body::before {
   width: auto;
   object-fit: contain;
   display: block;
+  mix-blend-mode: screen;
 }
 .nav__links {
   display: flex;
