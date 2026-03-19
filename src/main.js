@@ -110,36 +110,20 @@ function initCursor() {
 
   let mouseX = 0, mouseY = 0
   let ringX  = 0, ringY  = 0
-  let prevRingX = 0, prevRingY = 0
-  let currentRotation = 0
 
   document.addEventListener('mousemove', e => {
     mouseX = e.clientX
     mouseY = e.clientY
-    // Dot follows instantly
     dot.style.left = mouseX + 'px'
     dot.style.top  = mouseY + 'px'
   })
 
-  // Ring (the "C") follows with lerp and rotates based on movement direction
+  // Ring follows with lerp (lag)
   function animateRing() {
-    ringX += (mouseX - ringX) * 0.10
-    ringY += (mouseY - ringY) * 0.10
-
-    // Compute velocity to tilt the C slightly in the direction of travel
-    const vx = ringX - prevRingX
-    const vy = ringY - prevRingY
-    prevRingX = ringX
-    prevRingY = ringY
-
-    // Tilt: lean in direction of horizontal movement (max ±20°), decay toward 0
-    const targetRotation = Math.max(-22, Math.min(22, vx * 4))
-    currentRotation += (targetRotation - currentRotation) * 0.18
-
-    ring.style.left      = ringX + 'px'
-    ring.style.top       = ringY + 'px'
-    ring.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg)`
-
+    ringX += (mouseX - ringX) * 0.12
+    ringY += (mouseY - ringY) * 0.12
+    ring.style.left = ringX + 'px'
+    ring.style.top  = ringY + 'px'
     requestAnimationFrame(animateRing)
   }
   animateRing()
