@@ -1873,3 +1873,173 @@ body::before {
   .floating-wa { padding: 0.9rem; border-radius: 50%; }
   .hero__title-word { font-size: clamp(3.5rem, 18vw, 6rem); }
 }
+
+
+/* ════════════════════════════════════════════════════
+   CUSTOM CURSOR
+   ════════════════════════════════════════════════════ */
+@media (pointer: fine) {
+  /* Hide default cursor site-wide */
+  * { cursor: none !important; }
+
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 10px; height: 10px;
+    background: var(--c-fg);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, height 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    mix-blend-mode: difference;
+  }
+
+  .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(240, 236, 228, 0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: width 0.35s ease, height 0.35s ease, border-color 0.25s ease, opacity 0.2s ease;
+  }
+
+  /* Hover state — enlarged ring, red dot */
+  .cursor--hover .cursor-ring {
+    width: 60px; height: 60px;
+    border-color: var(--c-red);
+  }
+  .cursor--hover .cursor {
+    width: 6px; height: 6px;
+    background: var(--c-red);
+  }
+
+  /* Click state */
+  .cursor--click .cursor-ring {
+    width: 26px; height: 26px;
+    border-color: var(--c-red);
+    opacity: 0.6;
+  }
+
+  /* Hidden when over modals/iframes */
+  .cursor--hidden { opacity: 0; }
+}
+
+
+/* ════════════════════════════════════════════════════
+   MARQUEE STRIP
+   ════════════════════════════════════════════════════ */
+.marquee-strip {
+  overflow: hidden;
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+  padding: 0.75rem 0;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.marquee-strip__track {
+  display: inline-flex;
+  gap: 0;
+  animation: marquee-scroll 28s linear infinite;
+}
+
+.marquee-strip--reverse .marquee-strip__track {
+  animation-direction: reverse;
+}
+
+.marquee-strip__item {
+  display: inline-block;
+  padding: 0 2.5rem;
+  font-family: var(--f-display);
+  font-size: clamp(0.75rem, 1.4vw, 0.9rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.marquee-strip__item span {
+  color: var(--c-red);
+  margin: 0 0.6rem;
+  font-size: 0.5em;
+  vertical-align: middle;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Pause on hover */
+.marquee-strip:hover .marquee-strip__track {
+  animation-play-state: paused;
+}
+
+
+/* ════════════════════════════════════════════════════
+   SPLIT-TEXT TITLES
+   ════════════════════════════════════════════════════ */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.split-word__inner {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
+}
+
+.split-word.visible .split-word__inner {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Each word gets a slight extra delay based on its index (set via JS) */
+
+
+/* ════════════════════════════════════════════════════
+   GALLERY HOVER OVERLAY
+   ════════════════════════════════════════════════════ */
+.gallery__item {
+  position: relative; /* already set, but be explicit */
+}
+
+.gallery__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 12, 12, 0.65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.gallery__item:hover .gallery__overlay {
+  opacity: 1;
+}
+
+.gallery__overlay-num {
+  font-family: var(--f-display);
+  font-size: 2.2rem;
+  letter-spacing: 0.1em;
+  color: var(--c-fg);
+  line-height: 1;
+}
+
+.gallery__overlay-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--c-red);
+}

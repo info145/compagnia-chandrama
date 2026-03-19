@@ -98,9 +98,208 @@ function initNavbar() {
 }
 
 /* ════════════════════════════════════════════════════
-   SCROLL REVEAL
+   CUSTOM CURSOR
+   ════════════════════════════════════════════════════ */
+function initCursor() {
+  // Only on pointer-fine devices (desktop/mouse)
+  if (!window.matchMedia('(pointer: fine)').matches) return
+
+  const dot  = document.getElementById('cursor')
+  const ring = document.getElementById('cursor-ring')
+  if (!dot || !ring) return
+
+  let mouseX = 0, mouseY = 0
+  let ringX  = 0, ringY  = 0
+  let rafId
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX
+    mouseY = e.clientY
+    // Dot follows instantly
+    dot.style.left = mouseX + 'px'
+    dot.style.top  = mouseY + 'px'
+  })
+
+  // Ring follows with lerp (lag)
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12
+    ringY += (mouseY - ringY) * 0.12
+    ring.style.left = ringX + 'px'
+    ring.style.top  = ringY + 'px'
+    rafId = requestAnimationFrame(animateRing)
+  }
+  animateRing()
+
+  // Hover state on interactive elements
+  const hoverTargets = 'a, button, .cast-card, .gallery__item, .blog-card, .streaming__card, .date-item, .timeline-card'
+  document.querySelectorAll(hoverTargets).forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      dot.classList.add('cursor--hover')
+      ring.classList.add('cursor--hover')
+    })
+    el.addEventListener('mouseleave', () => {
+      dot.classList.remove('cursor--hover')
+      ring.classList.remove('cursor--hover')
+    })
+  })
+
+  // Click ripple
+  document.addEventListener('mousedown', () => {
+    dot.classList.add('cursor--click')
+    ring.classList.add('cursor--click')
+  })
+  document.addEventListener('mouseup', () => {
+    dot.classList.remove('cursor--click')
+    ring.classList.remove('cursor--click')
+  })
+
+  // Hide when leaving window
+  document.addEventListener('mouseleave', () => {
+    dot.classList.add('cursor--hidden')
+    ring.classList.add('cursor--hidden')
+  })
+  document.addEventListener('mouseenter', () => {
+    dot.classList.remove('cursor--hidden')
+    ring.classList.remove('cursor--hidden')
+  })
+}
+
+
+/* ════════════════════════════════════════════════════
+   SPLIT-TEXT TITLES
+   ════════════════════════════════════════════════════ */
+function initSplitTitles() {
+  const titles = document.querySelectorAll('.section__title')
+  titles.forEach(title => {
+    const words = title.textContent.trim().split(/\s+/)
+    title.innerHTML = words.map((word, i) =>
+      `<span class="split-word" style="--i:${i}">` +
+        `<span class="split-word__inner">${word}</span>` +
+      `</span>`
+    ).join(' ')
+    title.classList.add('split-title')
+  })
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return
+      const wordEls = entry.target.querySelectorAll('.split-word')
+      wordEls.forEach((w, i) => {
+        // Cascade delay: 80ms per word
+        setTimeout(() => w.classList.add('visible'), i * 80)
+      })
+      observer.unobserve(entry.target)
+    })
+  }, { threshold: 0.3 })
+
+  titles.forEach(title => observer.observe(title))
+}
+
+
+/* ════════════════════════════════════════════════════
+   ANIMATED COUNTERS
+   ════════════════════════════════════════════════════ */
+function initCounters() {
+  const stats = document.querySelectorAll('.stat__num')
+  if (!stats.length) return
+
+  function animateCounter(el) {
+    const raw    = el.textContent.trim()
+    const suffix = raw.replace(/[\d]/g, '')    // e.g. "+"
+    const target = parseInt(raw.replace(/\D/g, ''), 10)
+    const duration = target > 100 ? 1800 : 1000
+    const start = performance.now()
+
+    function tick(now) {
+      const elapsed  = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3)
+      const current = Math.round(eased * target)
+      el.textContent = current + suffix
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return
+      animateCounter(entry.target)
+      observer.unobserve(entry.target)
+    })
+  }, { threshold: 0.6 })
+
+  stats.forEach(el => observer.observe(el))
+}
+
+
+/* ════════════════════════════════════════════════════
+   PROGRESS BAR — SOSTIENICI
+   ════════════════════════════════════════════════════ */
+function initSosteniamo() {
+  const fill    = document.querySelector('.sostienici__progress-fill')
+  const raised  = document.querySelector('.sostienici__progress-raised')
+  const supporters = document.querySelector('.sostienici__progress-supporters')
+  if (!fill) return
+
+  const targetPct   = parseFloat(fill.dataset.target) || 100
+  const raisedTarget = parseInt(raised?.dataset.target || '500', 10)
+  const suppTarget   = parseInt(supporters?.dataset.target || '11', 10)
+  const raisedPre    = raised?.dataset.prefix || '€ '
+  const raisedSuf    = raised?.dataset.suffix || ' raccolti'
+  const suppSuf      = supporters?.dataset.suffix || ' sostenitori'
+
+  let animated = false
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting || animated) return
+      animated = true
+      observer.disconnect()
+
+      const duration = 1600
+      const start = performance.now()
+
+      function tick(now) {
+        const elapsed  = now - start
+        const progress = Math.min(elapsed / duration, 1)
+        const eased = 1 - Math.pow(1 - progress, 3)
+
+        fill.style.width = (eased * targetPct) + '%'
+        if (raised)     raised.textContent     = raisedPre + Math.round(eased * raisedTarget) + raisedSuf
+        if (supporters) supporters.textContent = Math.round(eased * suppTarget) + suppSuf
+
+        if (progress < 1) requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    })
+  }, { threshold: 0.4 })
+
+  observer.observe(fill.closest('.sostienici__progress') || fill)
+}
+
+
+/* ════════════════════════════════════════════════════
+   SCROLL REVEAL  (with stagger for card groups)
    ════════════════════════════════════════════════════ */
 function initReveal() {
+  // Stagger groups: cast, blog, gallery, streaming
+  const staggerGroups = [
+    '.cast__grid .cast-card',
+    '.blog__grid .blog-card',
+    '#gallery .gallery__item',
+    '.streaming__grid .streaming__card',
+  ]
+
+  staggerGroups.forEach(selector => {
+    const els = document.querySelectorAll(selector)
+    els.forEach((el, i) => {
+      // Override the generic transition-delay with a progressive one
+      el.style.transitionDelay = `${i * 0.08}s`
+    })
+  })
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -108,7 +307,7 @@ function initReveal() {
         observer.unobserve(entry.target)
       }
     })
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' })
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
 }
@@ -357,9 +556,13 @@ function initStreaming() {
    INIT
    ════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  initCursor()
   initNavbar()
   initHero()
+  initSplitTitles()
   initReveal()
+  initCounters()
+  initSosteniamo()
   initDatePicker()
   initForms()
   initLightbox()
