@@ -1646,6 +1646,206 @@ body::before {
 
 
 /* ════════════════════════════════════════════════════
+   STREAMING
+   ════════════════════════════════════════════════════ */
+.streaming__intro {
+  max-width: 640px;
+  margin: 0 auto 3rem;
+  text-align: center;
+  color: var(--c-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.streaming__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.streaming__card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.streaming__card:hover {
+  border-color: var(--c-gold);
+  transform: translateY(-4px);
+}
+.streaming__card--live {
+  border-color: #8b0000;
+}
+.streaming__card--live:hover {
+  border-color: var(--c-red);
+}
+
+.streaming__card-img {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+.streaming__card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.streaming__card:hover .streaming__card-img img {
+  transform: scale(1.04);
+}
+
+.streaming__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 3px;
+}
+.streaming__badge--vod {
+  background: var(--c-gold);
+  color: #000;
+}
+.streaming__badge--live {
+  background: var(--c-red);
+  color: #fff;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.streaming__card-body {
+  padding: 1.5rem;
+}
+.streaming__card-title {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  color: var(--c-cream);
+}
+.streaming__card-meta {
+  font-size: 0.75rem;
+  color: var(--c-muted);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.05em;
+}
+.streaming__card-desc {
+  font-size: 0.9rem;
+  color: var(--c-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.streaming__card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.streaming__price {
+  font-family: var(--f-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  color: var(--c-gold);
+}
+
+.btn--stream {
+  background: transparent;
+  border: 1px solid var(--c-gold);
+  color: var(--c-gold);
+  padding: 0.65rem 1.2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  font-family: inherit;
+}
+.btn--stream:hover {
+  background: var(--c-gold);
+  color: #000;
+}
+.streaming__card--live .btn--stream {
+  border-color: var(--c-red);
+  color: var(--c-red);
+}
+.streaming__card--live .btn--stream:hover {
+  background: var(--c-red);
+  color: #fff;
+}
+
+.streaming__note {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #555;
+  letter-spacing: 0.05em;
+  margin-top: 1rem;
+}
+
+/* ---- player embed (after payment redirect) ---- */
+.streaming__player {
+  margin: 3rem 0 2rem;
+  border: 1px solid var(--c-gold);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+}
+.streaming__player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #111;
+  border-bottom: 1px solid #222;
+}
+.streaming__player-header h3 {
+  font-family: var(--f-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-gold);
+}
+.streaming__player-close {
+  background: none;
+  border: none;
+  color: var(--c-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-family: inherit;
+}
+.streaming__player-close:hover { color: var(--c-cream); }
+
+.streaming__player-frame {
+  position: relative;
+  padding-bottom: 56.25%;
+}
+.streaming__player-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media (max-width: 600px) {
+  .streaming__card-footer { flex-direction: column; align-items: flex-start; }
+  .btn--stream { width: 100%; text-align: center; }
+}
+
+
+/* ════════════════════════════════════════════════════
    SCROLL REVEAL
    ════════════════════════════════════════════════════ */
 .reveal {

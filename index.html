@@ -27,6 +27,7 @@
         <li><a href="#date-passate">Date</a></li>
         <li><a href="#galleria">Galleria</a></li>
         <li><a href="#blog">Blog</a></li>
+        <li><a href="#streaming">Streaming</a></li>
         <li><a href="#sostienici">Sostienici</a></li>
         <li><a href="#contatti">Contatti</a></li>
         <li><a href="#prenotazioni" class="nav__cta">Prenota</a></li>
@@ -45,6 +46,7 @@
       <a href="#date-passate" class="mobile-menu__link">Date passate</a>
       <a href="#galleria" class="mobile-menu__link">Galleria</a>
       <a href="#blog" class="mobile-menu__link">Blog</a>
+      <a href="#streaming" class="mobile-menu__link">Streaming</a>
       <a href="#sostienici" class="mobile-menu__link">Sostienici</a>
       <a href="#contatti" class="mobile-menu__link">Contatti</a>
     </nav>
@@ -771,11 +773,83 @@
   </section>
 
 
-  <!-- ══ 07 · SOSTIENICI ══ -->
-  <section class="section sostienici" id="sostienici">
+  <!-- ══ 07 · STREAMING ══ -->
+  <section class="section streaming" id="streaming">
     <div class="section__inner">
       <div class="section__header reveal">
         <span class="section__num">07</span>
+        <h2 class="section__title">Streaming</h2>
+      </div>
+
+      <p class="streaming__intro reveal">
+        Guarda i nostri spettacoli da casa. Acquista l'accesso a una replica registrata o a un evento in diretta — ogni biglietto sostiene direttamente la compagnia.
+      </p>
+
+      <div class="streaming__grid">
+
+        <!-- CARD VOD: Oltre i Muri -->
+        <div class="streaming__card reveal">
+          <div class="streaming__card-img">
+            <img src="/Foto/Foto%20Varie/BArriere.png" alt="Oltre i Muri" />
+            <span class="streaming__badge streaming__badge--vod">On Demand</span>
+          </div>
+          <div class="streaming__card-body">
+            <h3 class="streaming__card-title">Oltre i Muri</h3>
+            <p class="streaming__card-meta">Regia Amalia Stagnaro · 70 min · 2023</p>
+            <p class="streaming__card-desc">Teatro fisico immersivo su corpo, voce e liberazione. La registrazione dello spettacolo completo.</p>
+            <div class="streaming__card-footer">
+              <span class="streaming__price">€ 5,00</span>
+              <button class="btn btn--stream" data-product="vod-oltre-i-muri" data-price="500" data-title="Oltre i Muri — Registrazione">
+                Acquista accesso
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD LIVE: prossimo evento -->
+        <div class="streaming__card streaming__card--live reveal">
+          <div class="streaming__card-img">
+            <img src="/Foto/Foto%20Varie/Gruppo.png" alt="Live — Oltre i Muri" />
+            <span class="streaming__badge streaming__badge--live">● Live</span>
+          </div>
+          <div class="streaming__card-body">
+            <h3 class="streaming__card-title">Prossimo Live</h3>
+            <p class="streaming__card-meta">Data da annunciare · In diretta streaming</p>
+            <p class="streaming__card-desc">Segui la replica in diretta dal tuo schermo. Stesso biglietto, stessa energia — da ovunque nel mondo.</p>
+            <div class="streaming__card-footer">
+              <span class="streaming__price">€ 8,00</span>
+              <button class="btn btn--stream" data-product="live-oltre-i-muri" data-price="800" data-title="Oltre i Muri — Live Streaming">
+                Acquista biglietto live
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Watch player (shown after successful payment) -->
+      <div class="streaming__player" id="streaming-player" style="display:none;">
+        <div class="streaming__player-header">
+          <h3 id="streaming-player-title"></h3>
+          <button class="streaming__player-close" id="streaming-player-close">✕ Chiudi</button>
+        </div>
+        <div class="streaming__player-frame">
+          <iframe id="streaming-iframe" src="" allowfullscreen allow="autoplay; fullscreen"></iframe>
+        </div>
+      </div>
+
+      <p class="streaming__note reveal">
+        Pagamento sicuro via Stripe · Il link di accesso arriva via email entro pochi secondi · Valido 48h
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ══ 08 · SOSTIENICI ══ -->
+  <section class="section sostienici" id="sostienici">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <span class="section__num">08</span>
         <h2 class="section__title">Sostienici</h2>
       </div>
 
@@ -840,7 +914,7 @@
   <section class="section" id="contatti">
     <div class="section__inner">
       <div class="section__header reveal">
-        <span class="section__num">08</span>
+        <span class="section__num">09</span>
         <h2 class="section__title">Contatti</h2>
       </div>
 

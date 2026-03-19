@@ -322,6 +322,38 @@ function initArticleModal() {
 }
 
 /* ════════════════════════════════════════════════════
+   STREAMING — Stripe Checkout
+   ════════════════════════════════════════════════════ */
+function initStreaming() {
+  document.querySelectorAll('.btn--stream').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const productId = btn.dataset.product
+      const title = btn.dataset.title || 'Spettacolo'
+
+      btn.disabled = true
+      btn.textContent = 'Caricamento…'
+
+      try {
+        const res = await fetch('/api/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId }),
+        })
+
+        if (!res.ok) throw new Error('Errore server')
+        const { url } = await res.json()
+        window.location.href = url
+      } catch (err) {
+        console.error(err)
+        btn.disabled = false
+        btn.textContent = 'Riprova'
+        alert('Si è verificato un errore. Riprova tra qualche istante.')
+      }
+    })
+  })
+}
+
+/* ════════════════════════════════════════════════════
    INIT
    ════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -333,4 +365,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox()
   initActressModal()
   initArticleModal()
+  initStreaming()
 })
