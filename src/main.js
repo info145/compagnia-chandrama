@@ -519,6 +519,62 @@ function initArticleModal() {
 }
 
 /* ════════════════════════════════════════════════════
+   BACKGROUND AUDIO
+   ════════════════════════════════════════════════════ */
+function initAudio() {
+  const btn      = document.getElementById('audio-btn')
+  const audio    = document.getElementById('bg-audio')
+  const iconPlay = document.getElementById('audio-icon-play')
+  const iconPause= document.getElementById('audio-icon-pause')
+  if (!btn || !audio) return
+
+  audio.volume = 0
+  let isPlaying = false
+  let fadeTimer = null
+
+  function fadeTo(targetVol, duration, onDone) {
+    clearInterval(fadeTimer)
+    const steps    = 40
+    const interval = duration / steps
+    const delta    = (targetVol - audio.volume) / steps
+    fadeTimer = setInterval(() => {
+      audio.volume = Math.min(1, Math.max(0, audio.volume + delta))
+      if ((delta > 0 && audio.volume >= targetVol) ||
+          (delta < 0 && audio.volume <= targetVol)) {
+        audio.volume = targetVol
+        clearInterval(fadeTimer)
+        if (onDone) onDone()
+      }
+    }, interval)
+  }
+
+  function play() {
+    audio.play().then(() => {
+      fadeTo(0.28, 1200)
+      isPlaying = true
+      btn.classList.add('playing')
+      iconPlay.style.display  = 'none'
+      iconPause.style.display = 'flex'
+    }).catch(() => {
+      // Autoplay blocked — silently ignore
+    })
+  }
+
+  function pause() {
+    fadeTo(0, 800, () => audio.pause())
+    isPlaying = false
+    btn.classList.remove('playing')
+    iconPlay.style.display  = 'flex'
+    iconPause.style.display = 'none'
+  }
+
+  btn.addEventListener('click', () => {
+    if (isPlaying) { pause() } else { play() }
+  })
+}
+
+
+/* ════════════════════════════════════════════════════
    STREAMING — Stripe Checkout
    ════════════════════════════════════════════════════ */
 function initStreaming() {
@@ -567,4 +623,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initActressModal()
   initArticleModal()
   initStreaming()
+  initAudio()
 })

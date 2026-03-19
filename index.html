@@ -1156,6 +1156,24 @@
     <span>Scrivici</span>
   </a>
 
+  <!-- ══ AUDIO PLAYER ══ -->
+  <audio id="bg-audio" src="/musica.mp3" loop preload="none"></audio>
+  <button class="audio-btn" id="audio-btn" aria-label="Riproduci musica di sottofondo" title="Musica">
+    <span class="audio-btn__icon audio-btn__icon--play" id="audio-icon-play">
+      <!-- nota musicale -->
+      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+        <path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/>
+      </svg>
+    </span>
+    <span class="audio-btn__icon audio-btn__icon--pause" id="audio-icon-pause" style="display:none">
+      <!-- pause bars -->
+      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+    </span>
+    <span class="audio-btn__ripple"></span>
+  </button>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
