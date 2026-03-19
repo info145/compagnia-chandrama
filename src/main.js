@@ -522,11 +522,13 @@ function initArticleModal() {
    BACKGROUND AUDIO
    ════════════════════════════════════════════════════ */
 function initAudio() {
-  const btn       = document.getElementById('audio-btn')
+  const overlay   = document.getElementById('entry-overlay')
+  const entryBtn  = document.getElementById('entry-btn')
+  const audioBtn  = document.getElementById('audio-btn')
   const audio     = document.getElementById('bg-audio')
   const iconPlay  = document.getElementById('audio-icon-play')
   const iconPause = document.getElementById('audio-icon-pause')
-  if (!btn || !audio) return
+  if (!audio) return
 
   let isPlaying = false
   let fadeTimer = null
@@ -549,20 +551,17 @@ function initAudio() {
 
   function setPlayingUI(playing) {
     isPlaying = playing
-    btn.classList.toggle('playing', playing)
-    iconPlay.style.display  = playing ? 'none' : 'flex'
-    iconPause.style.display = playing ? 'flex' : 'none'
+    if (!audioBtn) return
+    audioBtn.classList.toggle('playing', playing)
+    if (iconPlay)  iconPlay.style.display  = playing ? 'none' : 'flex'
+    if (iconPause) iconPause.style.display = playing ? 'flex' : 'none'
   }
 
   function startPlayback() {
     if (isPlaying) return
-    // iOS richiede volume > 0 prima di play()
     audio.volume = 0.01
     audio.play()
-      .then(() => {
-        fadeTo(0.28, 1500)
-        setPlayingUI(true)
-      })
+      .then(() => { fadeTo(0.28, 1800); setPlayingUI(true) })
       .catch(() => {})
   }
 
@@ -571,29 +570,49 @@ function initAudio() {
     setPlayingUI(false)
   }
 
-  // Bottone play/pause
-  btn.addEventListener('click', () => {
+  // Bottone play/pause nel sito
+  audioBtn?.addEventListener('click', () => {
     if (isPlaying) { stopPlayback() } else { startPlayback() }
   })
 
-  // Prova autoplay diretto (funziona su alcuni desktop)
-  audio.volume = 0.01
-  audio.play()
-    .then(() => {
-      fadeTo(0.28, 1800)
-      setPlayingUI(true)
+  // Entry overlay — tap per entrare e sbloccare audio (funziona su iOS)
+  function dismissOverlay() {
+    startPlayback()
+    if (overlay) {
+      overlay.classList.add('hidden')
+      // Rimuovi dal DOM dopo la transizione per non bloccare interazioni
+      overlay.addEventListener('transitionend', () => overlay.remove(), { once: true })
+    }
+  }
+
+  if (overlay && entryBtn) {
+    // Blocca lo scroll mentre l'overlay è aperto
+    document.body.style.overflow = 'hidden'
+
+    entryBtn.addEventListener('click', () => {
+      document.body.style.overflow = ''
+      dismissOverlay()
     })
-    .catch(() => {
-      // Fallback: primo click O touchend (unici gesti validi su iOS)
-      // capture:true garantisce che intercettiamo anche se il target chiama stopPropagation
-      const unlock = () => {
-        document.removeEventListener('click',    unlock, true)
-        document.removeEventListener('touchend', unlock, true)
-        startPlayback()
-      }
-      document.addEventListener('click',    unlock, { capture: true, once: true })
-      document.addEventListener('touchend', unlock, { capture: true, once: true })
+    // Tap ovunque sull'overlay (non solo sul bottone) per comodità mobile
+    overlay.addEventListener('click', () => {
+      document.body.style.overflow = ''
+      dismissOverlay()
     })
+  } else {
+    // Nessun overlay (es. pagina /watch) — tenta autoplay diretto
+    audio.volume = 0.01
+    audio.play()
+      .then(() => { fadeTo(0.28, 1800); setPlayingUI(true) })
+      .catch(() => {
+        const unlock = () => {
+          document.removeEventListener('click',    unlock, true)
+          document.removeEventListener('touchend', unlock, true)
+          startPlayback()
+        }
+        document.addEventListener('click',    unlock, { capture: true, once: true })
+        document.addEventListener('touchend', unlock, { capture: true, once: true })
+      })
+  }
 }
 
 
