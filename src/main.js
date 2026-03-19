@@ -324,6 +324,105 @@ function initArticleModal() {
 /* ════════════════════════════════════════════════════
    INIT
    ════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════
+   THEATRICAL SPOTLIGHT
+   ════════════════════════════════════════════════════ */
+function initSpotlight() {
+  if (window.matchMedia('(pointer: coarse)').matches) return // skip touch devices
+
+  const canvas = document.createElement('canvas')
+  canvas.id = 'spotlight'
+  canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:498;transition:opacity 0.4s;'
+  document.body.appendChild(canvas)
+
+  const btn = document.createElement('button')
+  btn.id = 'spotlight-toggle'
+  btn.title = 'Luce teatrale on/off'
+  btn.innerHTML = '🔦'
+  btn.style.cssText = `
+    position:fixed;bottom:1.8rem;left:1.8rem;z-index:700;
+    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
+    color:#fff;width:2.4rem;height:2.4rem;border-radius:50%;font-size:1rem;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:background 0.2s;backdrop-filter:blur(4px);
+  `
+  document.body.appendChild(btn)
+
+  const ctx = canvas.getContext('2d')
+  let cx = innerWidth / 2, cy = -300
+  let tx = cx, ty = cy
+  let on = true
+
+  const resize = () => { canvas.width = innerWidth; canvas.height = innerHeight }
+  resize()
+  window.addEventListener('resize', resize)
+
+  document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY })
+
+  btn.addEventListener('click', () => {
+    on = !on
+    canvas.style.opacity = on ? '1' : '0'
+    btn.style.background = on ? 'rgba(255,255,255,0.07)' : 'rgba(200,50,50,0.2)'
+  })
+
+  const lerp = (a, b, t) => a + (b - a) * t
+
+  function draw() {
+    cx = lerp(cx, tx, 0.08)
+    cy = lerp(cy, ty, 0.08)
+
+    const W = canvas.width, H = canvas.height
+    ctx.clearRect(0, 0, W, H)
+
+    // 1 · dark overlay
+    ctx.globalCompositeOperation = 'source-over'
+    ctx.fillStyle = 'rgba(0,0,0,0.55)'
+    ctx.fillRect(0, 0, W, H)
+
+    // 2 · cut out cone + spot
+    ctx.globalCompositeOperation = 'destination-out'
+
+    const hw = Math.max(cy * Math.tan(0.38), 55)
+
+    // cone beam from top
+    const cg = ctx.createLinearGradient(cx, 0, cx, cy)
+    cg.addColorStop(0,   'rgba(0,0,0,0)')
+    cg.addColorStop(0.3, 'rgba(0,0,0,0.25)')
+    cg.addColorStop(1,   'rgba(0,0,0,0.92)')
+    ctx.fillStyle = cg
+    ctx.beginPath()
+    ctx.moveTo(cx, 0)
+    ctx.lineTo(cx + hw,       cy + 60)
+    ctx.lineTo(cx - hw,       cy + 60)
+    ctx.closePath()
+    ctx.fill()
+
+    // soft ellipse at mouse
+    const sg = ctx.createRadialGradient(cx, cy, 0, cx, cy, hw)
+    sg.addColorStop(0,    'rgba(0,0,0,1)')
+    sg.addColorStop(0.55, 'rgba(0,0,0,0.8)')
+    sg.addColorStop(1,    'rgba(0,0,0,0)')
+    ctx.fillStyle = sg
+    ctx.beginPath()
+    ctx.ellipse(cx, cy, hw, hw * 0.58, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    // 3 · warm amber glow
+    ctx.globalCompositeOperation = 'source-over'
+    const ag = ctx.createRadialGradient(cx, cy, 0, cx, cy, hw * 1.2)
+    ag.addColorStop(0,   'rgba(255,210,90,0.08)')
+    ag.addColorStop(0.4, 'rgba(255,160,40,0.04)')
+    ag.addColorStop(1,   'rgba(0,0,0,0)')
+    ctx.fillStyle = ag
+    ctx.beginPath()
+    ctx.ellipse(cx, cy, hw * 1.2, hw * 0.72, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    requestAnimationFrame(draw)
+  }
+  draw()
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar()
   initHero()
@@ -333,4 +432,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox()
   initActressModal()
   initArticleModal()
+  initSpotlight()
 })
