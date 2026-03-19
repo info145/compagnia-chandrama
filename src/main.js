@@ -568,7 +568,28 @@ function initAudio() {
     iconPause.style.display = 'none'
   }
 
-  btn.addEventListener('click', () => {
+  // Try autoplay immediately; if blocked, start on first user gesture
+  function tryAutoplay() {
+    audio.play().then(() => {
+      fadeTo(0.28, 1800)
+      isPlaying = true
+      btn.classList.add('playing')
+      iconPlay.style.display  = 'none'
+      iconPause.style.display = 'flex'
+    }).catch(() => {
+      // Autoplay blocked — wait for any user interaction
+      const events = ['click', 'scroll', 'keydown', 'touchstart', 'pointerdown']
+      function onFirstInteraction() {
+        events.forEach(ev => document.removeEventListener(ev, onFirstInteraction))
+        if (!isPlaying) play()
+      }
+      events.forEach(ev => document.addEventListener(ev, onFirstInteraction, { once: true, passive: true }))
+    })
+  }
+  tryAutoplay()
+
+  btn.addEventListener('click', e => {
+    e.stopPropagation()
     if (isPlaying) { pause() } else { play() }
   })
 }
