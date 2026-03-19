@@ -1898,23 +1898,31 @@ body::before {
   .cursor-ring {
     position: fixed;
     top: 0; left: 0;
+    width: 42px; height: 42px;
     pointer-events: none;
     z-index: 99998;
     transform: translate(-50%, -50%) rotate(0deg);
-    font-family: var(--f-display);
-    font-size: 2.2rem;
-    line-height: 1;
-    color: rgba(240, 236, 228, 0.35);
-    letter-spacing: -0.02em;
     user-select: none;
-    transition: color 0.25s ease, font-size 0.25s ease, opacity 0.2s ease;
+    opacity: 0.55;
+    transition: width 0.25s ease, height 0.25s ease, opacity 0.2s ease;
     will-change: transform;
   }
 
-  /* Hover state — bigger C, red */
+  .cursor-ring img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    filter: invert(1) brightness(2);
+    pointer-events: none;
+  }
+
+  /* Hover state — bigger logo mark, red tint */
   .cursor--hover .cursor-ring {
-    font-size: 3.2rem;
-    color: var(--c-red);
+    width: 62px; height: 62px;
+    opacity: 0.9;
+  }
+  .cursor--hover .cursor-ring img {
+    filter: invert(1) brightness(2) sepia(1) saturate(6) hue-rotate(310deg);
   }
   .cursor--hover .cursor {
     width: 4px; height: 4px;
@@ -1923,9 +1931,8 @@ body::before {
 
   /* Click state — compress */
   .cursor--click .cursor-ring {
-    font-size: 1.6rem;
-    color: var(--c-red);
-    opacity: 0.7;
+    width: 30px; height: 30px;
+    opacity: 0.6;
   }
 
   /* Hidden when leaving window */
