@@ -555,41 +555,44 @@ function initAudio() {
   }
 
   function startPlayback() {
-    audio.volume = 0
+    if (isPlaying) return
+    // iOS richiede volume > 0 prima di play()
+    audio.volume = 0.01
     audio.play()
       .then(() => {
-        fadeTo(0.28, 1600)
+        fadeTo(0.28, 1500)
         setPlayingUI(true)
       })
       .catch(() => {})
   }
 
-  function pause() {
+  function stopPlayback() {
     fadeTo(0, 700, () => { audio.pause(); audio.volume = 0 })
     setPlayingUI(false)
   }
 
-  // Bottone — click diretto, sempre funziona (gesto utente garantito)
+  // Bottone play/pause
   btn.addEventListener('click', () => {
-    if (isPlaying) { pause() } else { startPlayback() }
+    if (isPlaying) { stopPlayback() } else { startPlayback() }
   })
 
-  // Tenta autoplay; se bloccato aspetta il primo click/touch/tasto
-  // (NON scroll — non è un gesto valido per i browser)
-  audio.volume = 0
+  // Prova autoplay diretto (funziona su alcuni desktop)
+  audio.volume = 0.01
   audio.play()
     .then(() => {
       fadeTo(0.28, 1800)
       setPlayingUI(true)
     })
     .catch(() => {
-      const GESTURES = ['click', 'keydown', 'touchstart', 'pointerdown']
-      function onGesture() {
-        GESTURES.forEach(ev => document.removeEventListener(ev, onGesture, true))
-        if (!isPlaying) startPlayback()
+      // Fallback: primo click O touchend (unici gesti validi su iOS)
+      // capture:true garantisce che intercettiamo anche se il target chiama stopPropagation
+      const unlock = () => {
+        document.removeEventListener('click',    unlock, true)
+        document.removeEventListener('touchend', unlock, true)
+        startPlayback()
       }
-      // Usa capture: true per intercettare prima di stopPropagation
-      GESTURES.forEach(ev => document.addEventListener(ev, onGesture, { capture: true, once: true }))
+      document.addEventListener('click',    unlock, { capture: true, once: true })
+      document.addEventListener('touchend', unlock, { capture: true, once: true })
     })
 }
 
