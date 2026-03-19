@@ -538,9 +538,12 @@ function initAudio() {
     const steps    = 40
     const interval = duration / steps
     const delta    = (targetVol - audio.volume) / steps
+    let stepCount  = 0
     fadeTimer = setInterval(() => {
+      stepCount++
       audio.volume = Math.min(1, Math.max(0, audio.volume + delta))
-      const done = delta > 0 ? audio.volume >= targetVol : audio.volume <= targetVol
+      const done = stepCount >= steps ||
+                   (delta > 0 ? audio.volume >= targetVol : audio.volume <= targetVol)
       if (done) {
         audio.volume = targetVol
         clearInterval(fadeTimer)
@@ -566,8 +569,12 @@ function initAudio() {
   }
 
   function stopPlayback() {
-    fadeTo(0, 700, () => { audio.pause(); audio.volume = 0 })
     setPlayingUI(false)
+    fadeTo(0, 600, () => { audio.pause(); audio.volume = 0 })
+    // Safari fallback: se il fade non completa entro 700ms, ferma comunque
+    setTimeout(() => {
+      if (!isPlaying) { audio.pause(); audio.volume = 0 }
+    }, 700)
   }
 
   // Bottone play/pause nel sito
