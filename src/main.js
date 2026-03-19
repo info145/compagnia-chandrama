@@ -522,13 +522,12 @@ function initArticleModal() {
    BACKGROUND AUDIO
    ════════════════════════════════════════════════════ */
 function initAudio() {
-  const btn      = document.getElementById('audio-btn')
-  const audio    = document.getElementById('bg-audio')
-  const iconPlay = document.getElementById('audio-icon-play')
-  const iconPause= document.getElementById('audio-icon-pause')
+  const btn       = document.getElementById('audio-btn')
+  const audio     = document.getElementById('bg-audio')
+  const iconPlay  = document.getElementById('audio-icon-play')
+  const iconPause = document.getElementById('audio-icon-pause')
   if (!btn || !audio) return
 
-  audio.volume = 0
   let isPlaying = false
   let fadeTimer = null
 
@@ -539,8 +538,8 @@ function initAudio() {
     const delta    = (targetVol - audio.volume) / steps
     fadeTimer = setInterval(() => {
       audio.volume = Math.min(1, Math.max(0, audio.volume + delta))
-      if ((delta > 0 && audio.volume >= targetVol) ||
-          (delta < 0 && audio.volume <= targetVol)) {
+      const done = delta > 0 ? audio.volume >= targetVol : audio.volume <= targetVol
+      if (done) {
         audio.volume = targetVol
         clearInterval(fadeTimer)
         if (onDone) onDone()
@@ -548,50 +547,50 @@ function initAudio() {
     }, interval)
   }
 
-  function play() {
-    audio.play().then(() => {
-      fadeTo(0.28, 1200)
-      isPlaying = true
-      btn.classList.add('playing')
-      iconPlay.style.display  = 'none'
-      iconPause.style.display = 'flex'
-    }).catch(() => {
-      // Autoplay blocked — silently ignore
-    })
+  function setPlayingUI(playing) {
+    isPlaying = playing
+    btn.classList.toggle('playing', playing)
+    iconPlay.style.display  = playing ? 'none' : 'flex'
+    iconPause.style.display = playing ? 'flex' : 'none'
+  }
+
+  function startPlayback() {
+    audio.volume = 0
+    audio.play()
+      .then(() => {
+        fadeTo(0.28, 1600)
+        setPlayingUI(true)
+      })
+      .catch(() => {})
   }
 
   function pause() {
-    fadeTo(0, 800, () => audio.pause())
-    isPlaying = false
-    btn.classList.remove('playing')
-    iconPlay.style.display  = 'flex'
-    iconPause.style.display = 'none'
+    fadeTo(0, 700, () => { audio.pause(); audio.volume = 0 })
+    setPlayingUI(false)
   }
 
-  // Try autoplay immediately; if blocked, start on first user gesture
-  function tryAutoplay() {
-    audio.play().then(() => {
-      fadeTo(0.28, 1800)
-      isPlaying = true
-      btn.classList.add('playing')
-      iconPlay.style.display  = 'none'
-      iconPause.style.display = 'flex'
-    }).catch(() => {
-      // Autoplay blocked — wait for any user interaction
-      const events = ['click', 'scroll', 'keydown', 'touchstart', 'pointerdown']
-      function onFirstInteraction() {
-        events.forEach(ev => document.removeEventListener(ev, onFirstInteraction))
-        if (!isPlaying) play()
-      }
-      events.forEach(ev => document.addEventListener(ev, onFirstInteraction, { once: true, passive: true }))
-    })
-  }
-  tryAutoplay()
-
-  btn.addEventListener('click', e => {
-    e.stopPropagation()
-    if (isPlaying) { pause() } else { play() }
+  // Bottone — click diretto, sempre funziona (gesto utente garantito)
+  btn.addEventListener('click', () => {
+    if (isPlaying) { pause() } else { startPlayback() }
   })
+
+  // Tenta autoplay; se bloccato aspetta il primo click/touch/tasto
+  // (NON scroll — non è un gesto valido per i browser)
+  audio.volume = 0
+  audio.play()
+    .then(() => {
+      fadeTo(0.28, 1800)
+      setPlayingUI(true)
+    })
+    .catch(() => {
+      const GESTURES = ['click', 'keydown', 'touchstart', 'pointerdown']
+      function onGesture() {
+        GESTURES.forEach(ev => document.removeEventListener(ev, onGesture, true))
+        if (!isPlaying) startPlayback()
+      }
+      // Usa capture: true per intercettare prima di stopPropagation
+      GESTURES.forEach(ev => document.addEventListener(ev, onGesture, { capture: true, once: true }))
+    })
 }
 
 
