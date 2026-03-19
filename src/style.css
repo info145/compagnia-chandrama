@@ -1898,33 +1898,37 @@ body::before {
   .cursor-ring {
     position: fixed;
     top: 0; left: 0;
-    width: 36px; height: 36px;
-    border: 1px solid rgba(240, 236, 228, 0.4);
-    border-radius: 50%;
     pointer-events: none;
     z-index: 99998;
-    transform: translate(-50%, -50%);
-    transition: width 0.35s ease, height 0.35s ease, border-color 0.25s ease, opacity 0.2s ease;
+    transform: translate(-50%, -50%) rotate(0deg);
+    font-family: var(--f-display);
+    font-size: 2.2rem;
+    line-height: 1;
+    color: rgba(240, 236, 228, 0.35);
+    letter-spacing: -0.02em;
+    user-select: none;
+    transition: color 0.25s ease, font-size 0.25s ease, opacity 0.2s ease;
+    will-change: transform;
   }
 
-  /* Hover state — enlarged ring, red dot */
+  /* Hover state — bigger C, red */
   .cursor--hover .cursor-ring {
-    width: 60px; height: 60px;
-    border-color: var(--c-red);
+    font-size: 3.2rem;
+    color: var(--c-red);
   }
   .cursor--hover .cursor {
-    width: 6px; height: 6px;
+    width: 4px; height: 4px;
     background: var(--c-red);
   }
 
-  /* Click state */
+  /* Click state — compress */
   .cursor--click .cursor-ring {
-    width: 26px; height: 26px;
-    border-color: var(--c-red);
-    opacity: 0.6;
+    font-size: 1.6rem;
+    color: var(--c-red);
+    opacity: 0.7;
   }
 
-  /* Hidden when over modals/iframes */
+  /* Hidden when leaving window */
   .cursor--hidden { opacity: 0; }
 }
 
