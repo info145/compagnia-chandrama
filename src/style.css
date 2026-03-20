@@ -130,7 +130,11 @@ body::before {
   mix-blend-mode: screen;
 }
 /* ── Spotlight navbar ──────────────────────────────── */
-#nav { overflow: visible; }
+#nav,
+.nav__inner,
+.nav-spotlight,
+.nav-spotlight .super-trouper,
+.nav-spotlight .ray { overflow: visible; }
 
 @supports (anchor-name: --foo) {
   .nav-spotlight {
@@ -182,7 +186,7 @@ body::before {
 
   .nav-spotlight .ray {
     height: 100%;
-    mask-image: linear-gradient(0deg, #0000 0.5rem, #000 5rem);
+    mask-image: linear-gradient(0deg, #0000 0.3rem, #000 4rem);
 
     .l-l, .l-r, .r-l, .r-r {
       --angle: atan(100cqi / 100cqb);
