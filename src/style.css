@@ -129,30 +129,222 @@ body::before {
   display: block;
   mix-blend-mode: screen;
 }
-.nav__links {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
+/* ── Spotlight navbar ──────────────────────────────── */
+#nav { overflow: visible; }
+
+@supports (anchor-name: --foo) {
+  .nav-spotlight {
+    --ray-width: 2.5rem;
+    --ray-opacity: 0.45;
+    --spot-opacity: 0.5;
+    --v-gap: 72px;
+    --duration: 0.5s;
+    --easing: ease-in-out;
+    --color: #e63030;
+    --outset: 0px;
+    --spot-anchor: --spot;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    gap: var(--v-gap);
+    anchor-scope: all;
+
+    &:has(a:active) .super-trouper > * {
+      --outset: -1.5rem;
+      --delay: 0s;
+      --duration: 0.2s;
+    }
+
+    > * { grid-column: 1; }
+  }
+
+  .nav-spotlight .spots {
+    display: flex;
+    grid-row: 1;
+    gap: 7rem;
+  }
+
+  .nav-spotlight .spot {
+    width: 0.875rem;
+    aspect-ratio: 1;
+    border-radius: 100%;
+    anchor-name: --spot;
+    &:nth-child(2) { anchor-name: --spot-blue; }
+    &:nth-child(3) { anchor-name: --spot-green; }
+  }
+
+  .nav-spotlight .super-trouper {
+    grid-row: 1 / 3;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .nav-spotlight .ray {
+    height: 100%;
+    mask-image: linear-gradient(0deg, #0000 0.5rem, #000 5rem);
+
+    .l-l, .l-r, .r-l, .r-r {
+      --angle: atan(100cqi / 100cqb);
+      container-type: size;
+      position: absolute;
+      mix-blend-mode: screen;
+      left: calc(anchor(--link left) - var(--outset));
+      right: anchor(var(--spot-anchor) center);
+      top: anchor(var(--spot-anchor) center);
+      bottom: calc(anchor(--link bottom) - 1rem);
+      transition: left var(--duration) var(--delay, 0s),
+                  right var(--duration) var(--delay, 0s);
+      transition-timing-function: var(--easing);
+
+      &::after {
+        --gradient-angle: atan(var(--ray-width) / 100cqb);
+        content: "";
+        opacity: calc(var(--ray-opacity) * sign(max(0px, 1cqi)));
+        width: max(5rem, 100cqi);
+        height: calc(hypot(100cqi, 100cqb) + 12rem);
+        background-image: conic-gradient(at 0% 0%, transparent calc(180deg - var(--gradient-angle)), var(--color) 180deg);
+        position: absolute;
+        left: 100%; top: 0;
+        rotate: var(--angle);
+        transform-origin: left top;
+        z-index: 4;
+        filter: blur(1px);
+      }
+    }
+
+    .l-r {
+      left: anchor(var(--spot-anchor) center);
+      right: calc(anchor(--link left) + var(--outset));
+      &::after { rotate: calc(var(--angle) * -1); left: 0; }
+    }
+
+    .r-l, .r-r {
+      left: calc(anchor(--link right) + var(--outset));
+      right: anchor(var(--spot-anchor) center);
+      &::after {
+        background-image: conic-gradient(at 100% 0%, var(--color) 180deg, transparent calc(180deg + var(--gradient-angle)));
+        left: auto; right: 0;
+        transform-origin: right top;
+      }
+    }
+
+    .r-r {
+      left: anchor(var(--spot-anchor) center);
+      right: calc(anchor(--link right) - var(--outset));
+      &::after { rotate: calc(var(--angle) * -1); right: 100%; }
+    }
+  }
+
+  .nav-spotlight .light {
+    position: absolute;
+    left: calc(anchor(--link left) - var(--outset));
+    right: calc(anchor(--link right) - var(--outset));
+    bottom: calc(anchor(--link bottom) - 1.5rem);
+    height: 1rem;
+    background: rgb(from var(--color) r g b / 0.28);
+    border: 1px solid var(--color);
+    opacity: var(--spot-opacity);
+    border-radius: 100%;
+    transition: all var(--duration) var(--delay, 0s);
+    transition-timing-function: var(--easing);
+    filter: blur(2px);
+    mask-image: linear-gradient(#0001, #000);
+  }
+
+  .nav-spotlight__links {
+    grid-row: 2;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      inset-inline: -2rem;
+      z-index: 2;
+      background: linear-gradient(rgba(10,10,10,0) 50%, rgba(10,10,10,0.12));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      mask-image: linear-gradient(90deg, #0000, #000 20%, 80%, #0000 100%);
+    }
+  }
+
+  .nav-spotlight__links ul {
+    margin: 0; padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+
+    &:has(a:hover, a:focus-visible) a:not(:hover, :focus-visible, .nav__cta) {
+      opacity: 0.3;
+    }
+  }
+
+  .nav-spotlight__links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    font-weight: 500;
+    display: block;
+    padding-inline: 0.9rem;
+    position: relative;
+    transition-property: opacity, color, text-shadow;
+    transition-duration: calc(var(--duration) * 1.5);
+
+    &:hover, &:focus-visible {
+      anchor-name: --link;
+      color: #fff;
+      text-shadow: 0 0 0.6rem var(--c-red), 0 0 1rem rgba(192,160,112,0.5);
+    }
+
+    &:focus-visible {
+      outline: 2px dotted rgba(255,255,255,0.4);
+      outline-offset: 4px;
+      border-radius: 999px;
+    }
+  }
+
+  /* Prenota stays as current-page anchor when nothing else hovered */
+  .nav-spotlight__links:not(:has(a:hover)) a[href="#prenotazioni"] {
+    anchor-name: --link;
+  }
 }
-.nav__links a {
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--c-muted);
-  font-weight: 500;
-  transition: color 0.2s;
-  position: relative;
+
+/* Fallback for browsers without anchor-name support */
+@supports not (anchor-name: --foo) {
+  .nav-spotlight__links ul {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin: 0; padding: 0;
+    list-style: none;
+  }
+  .nav-spotlight .spots,
+  .nav-spotlight .super-trouper { display: none; }
+  .nav-spotlight__links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    font-weight: 500;
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--c-red);
+      transition: width 0.25s;
+    }
+    &:hover { color: var(--c-fg); }
+    &:hover::after { width: 100%; }
+  }
 }
-.nav__links a::after {
-  content: '';
-  position: absolute;
-  bottom: -3px; left: 0;
-  width: 0; height: 1px;
-  background: var(--c-red);
-  transition: width 0.25s;
-}
-.nav__links a:hover { color: var(--c-fg); }
-.nav__links a:hover::after { width: 100%; }
+
 .nav__cta {
   border: 1px solid var(--c-red) !important;
   color: var(--c-red) !important;
@@ -162,8 +354,12 @@ body::before {
 .nav__cta:hover {
   background: var(--c-red) !important;
   color: var(--c-bg) !important;
+  text-shadow: none !important;
 }
-.nav__cta::after { display: none !important; }
+
+@media (max-width: 900px) {
+  .nav-spotlight { display: none; }
+}
 
 /* Hamburger */
 .nav__burger {
