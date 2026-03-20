@@ -521,6 +521,375 @@ function initArticleModal() {
 /* ════════════════════════════════════════════════════
    BACKGROUND AUDIO
    ════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════
+   PLASMA SPHERE — ENTRY OVERLAY (Three.js)
+   ════════════════════════════════════════════════════ */
+async function initPlasmaSphere() {
+  const overlay = document.getElementById('entry-overlay')
+  if (!overlay) return
+
+  // Lazy-load Three.js so it doesn't block the main bundle
+  const THREE = await import('three')
+
+  // ── Lunar palette ──────────────────────────────────
+  const C = {
+    deep:      0x04030d,   // near black with blue tint
+    mid:       0x6b4e9e,   // lunar purple
+    bright:    0xd4c8f0,   // silver lavender
+    shell:     0xc0a070,   // gold
+    shellBack: 0x1a0828,   // dark purple back glow
+  }
+
+  const W = () => overlay.offsetWidth  || window.innerWidth
+  const H = () => overlay.offsetHeight || window.innerHeight
+
+  // ── Scene ──────────────────────────────────────────
+  const scene = new THREE.Scene()
+  scene.background = new THREE.Color(0x000000)
+
+  const camera = new THREE.PerspectiveCamera(68, W() / H(), 0.1, 100)
+  camera.position.z = 2.5
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true })
+  renderer.setSize(W(), H())
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.toneMapping = THREE.ACESFilmicToneMapping
+  renderer.toneMappingExposure = 0.85
+
+  // Mount canvas as overlay background
+  const cvs = renderer.domElement
+  cvs.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;'
+  overlay.insertBefore(cvs, overlay.firstChild)
+
+  // ── Rotation group ─────────────────────────────────
+  const mainGroup = new THREE.Group()
+  scene.add(mainGroup)
+
+  // ── Light ──────────────────────────────────────────
+  mainGroup.add(new THREE.PointLight(0xb090ff, 2.2, 10))
+
+  // ── Noise GLSL ─────────────────────────────────────
+  const noiseFunctions = `
+    vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+    vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
+    vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}
+    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+    float snoise(vec3 v){
+      const vec2 C=vec2(1./6.,1./3.);
+      const vec4 D=vec4(0.,.5,1.,2.);
+      vec3 i=floor(v+dot(v,C.yyy));
+      vec3 x0=v-i+dot(i,C.xxx);
+      vec3 g=step(x0.yzx,x0.xyz);
+      vec3 l=1.-g;
+      vec3 i1=min(g.xyz,l.zxy);
+      vec3 i2=max(g.xyz,l.zxy);
+      vec3 x1=x0-i1+C.xxx;
+      vec3 x2=x0-i2+C.yyy;
+      vec3 x3=x0-D.yyy;
+      i=mod289(i);
+      vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+      float n_=0.142857142857;
+      vec3 ns=n_*D.wyz-D.xzx;
+      vec4 j=p-49.*floor(p*ns.z*ns.z);
+      vec4 x_=floor(j*ns.z);
+      vec4 y_=floor(j-7.*x_);
+      vec4 x=x_*ns.x+ns.yyyy;
+      vec4 y=y_*ns.x+ns.yyyy;
+      vec4 h=1.-abs(x)-abs(y);
+      vec4 b0=vec4(x.xy,y.xy);
+      vec4 b1=vec4(x.zw,y.zw);
+      vec4 s0=floor(b0)*2.+1.;
+      vec4 s1=floor(b1)*2.+1.;
+      vec4 sh=-step(h,vec4(0.));
+      vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;
+      vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+      vec3 p0=vec3(a0.xy,h.x);
+      vec3 p1=vec3(a0.zw,h.y);
+      vec3 p2=vec3(a1.xy,h.z);
+      vec3 p3=vec3(a1.zw,h.w);
+      vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+      p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+      vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);
+      m=m*m;
+      return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+    }
+    float fbm(vec3 p){
+      float t=0.,a=.5,f=1.;
+      for(int i=0;i<3;i++){t+=snoise(p*f)*a;a*=.5;f*=2.;}
+      return t;
+    }
+  `
+
+  // ── Shell ──────────────────────────────────────────
+  const shellGeo = new THREE.SphereGeometry(1.0, 64, 64)
+  const shellVS = `
+    varying vec3 vNormal;varying vec3 vViewPosition;
+    void main(){vNormal=normalize(normalMatrix*normal);
+      vec4 mv=modelViewMatrix*vec4(position,1.);vViewPosition=-mv.xyz;gl_Position=projectionMatrix*mv;}
+  `
+  const shellFS = `
+    varying vec3 vNormal;varying vec3 vViewPosition;
+    uniform vec3 uColor;uniform float uOpacity;
+    void main(){float f=pow(1.-dot(normalize(vNormal),normalize(vViewPosition)),2.5);
+      gl_FragColor=vec4(uColor,f*uOpacity);}
+  `
+  const mkShell = (color, opacity, side) => new THREE.ShaderMaterial({
+    vertexShader: shellVS, fragmentShader: shellFS,
+    uniforms: { uColor: { value: new THREE.Color(color) }, uOpacity: { value: opacity } },
+    transparent: true, blending: THREE.AdditiveBlending, side, depthWrite: false
+  })
+  mainGroup.add(new THREE.Mesh(shellGeo, mkShell(C.shellBack, 0.35, THREE.BackSide)))
+  mainGroup.add(new THREE.Mesh(shellGeo, mkShell(C.shell, 0.38, THREE.FrontSide)))
+
+  // ── Plasma ─────────────────────────────────────────
+  const plasmaMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime:        { value: 0 },
+      uScale:       { value: 0.14 },
+      uBrightness:  { value: 1.25 },
+      uThreshold:   { value: 0.068 },
+      uColorDeep:   { value: new THREE.Color(C.deep) },
+      uColorMid:    { value: new THREE.Color(C.mid) },
+      uColorBright: { value: new THREE.Color(C.bright) },
+    },
+    vertexShader: `
+      varying vec3 vPosition;varying vec3 vNormal;varying vec3 vViewPosition;
+      void main(){vPosition=position;vNormal=normalize(normalMatrix*normal);
+        vec4 mv=modelViewMatrix*vec4(position,1.);vViewPosition=-mv.xyz;gl_Position=projectionMatrix*mv;}
+    `,
+    fragmentShader: `
+      uniform float uTime,uScale,uBrightness,uThreshold;
+      uniform vec3 uColorDeep,uColorMid,uColorBright;
+      varying vec3 vPosition,vNormal,vViewPosition;
+      ${noiseFunctions}
+      void main(){
+        vec3 p=vPosition*uScale;
+        vec3 q=vec3(fbm(p+vec3(0.,uTime*.05,0.)),fbm(p+vec3(5.2,1.3,2.8)+uTime*.05),fbm(p+vec3(2.2,8.4,.5)-uTime*.02));
+        float density=fbm(p+2.*q);
+        float t=(density+.4)*.8;
+        float alpha=smoothstep(uThreshold,.7,t);
+        vec3 color=mix(uColorDeep,uColorMid,smoothstep(uThreshold,.5,t));
+        color=mix(color,uColorBright,smoothstep(.5,.8,t));
+        color=mix(color,vec3(1.),smoothstep(.8,1.,t));
+        float facing=dot(normalize(vNormal),normalize(vViewPosition));
+        float depth=(facing+1.)*.5;
+        gl_FragColor=vec4(color*uBrightness,alpha*(.02+.98*depth));
+      }
+    `,
+    transparent: true, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
+  })
+  const plasmaMesh = new THREE.Mesh(new THREE.SphereGeometry(0.998, 128, 128), plasmaMat)
+  mainGroup.add(plasmaMesh)
+
+  // ── Particles ──────────────────────────────────────
+  const pCount = 500
+  const pPos = new Float32Array(pCount * 3)
+  const pSizes = new Float32Array(pCount)
+  for (let i = 0; i < pCount; i++) {
+    const r = 0.95 * Math.cbrt(Math.random())
+    const theta = Math.random() * Math.PI * 2
+    const phi = Math.acos(2 * Math.random() - 1)
+    pPos[i*3]   = r * Math.sin(phi) * Math.cos(theta)
+    pPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta)
+    pPos[i*3+2] = r * Math.cos(phi)
+    pSizes[i] = Math.random()
+  }
+  const pGeo = new THREE.BufferGeometry()
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3))
+  pGeo.setAttribute('aSize', new THREE.BufferAttribute(pSizes, 1))
+  const pMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uColor: { value: new THREE.Color(0xffffff) } },
+    vertexShader: `
+      uniform float uTime;attribute float aSize;varying float vAlpha;
+      void main(){vec3 pos=position;
+        pos.y+=sin(uTime*.2+pos.x)*.02;pos.x+=cos(uTime*.15+pos.z)*.02;
+        vec4 mv=modelViewMatrix*vec4(pos,1.);gl_Position=projectionMatrix*mv;
+        gl_PointSize=(8.*aSize+4.)*(1./-mv.z);
+        vAlpha=.8+.2*sin(uTime+aSize*10.);}
+    `,
+    fragmentShader: `
+      uniform vec3 uColor;varying float vAlpha;
+      void main(){vec2 uv=gl_PointCoord-vec2(.5);if(length(uv)>.5)discard;
+        float g=pow(1.-length(uv)*2.,.8);gl_FragColor=vec4(uColor,g*vAlpha);}
+    `,
+    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
+  })
+  mainGroup.add(new THREE.Points(pGeo, pMat))
+
+  // ── Mouse → gentle rotation offset ────────────────
+  let targetRotX = 0, targetRotY = 0
+  overlay.addEventListener('mousemove', e => {
+    targetRotY = ((e.clientX / window.innerWidth)  - 0.5) * 0.6
+    targetRotX = ((e.clientY / window.innerHeight) - 0.5) * 0.3
+  }, { passive: true })
+
+  // ── Resize ─────────────────────────────────────────
+  window.addEventListener('resize', () => {
+    camera.aspect = W() / H()
+    camera.updateProjectionMatrix()
+    renderer.setSize(W(), H())
+  }, { passive: true })
+
+  // ── Animate ────────────────────────────────────────
+  let rafId, startTime = performance.now()
+  function animate() {
+    rafId = requestAnimationFrame(animate)
+    const t = (performance.now() - startTime) / 1000
+
+    plasmaMat.uniforms.uTime.value = t * 0.78
+    pMat.uniforms.uTime.value = t
+
+    plasmaMesh.rotation.y = t * 0.08
+    mainGroup.rotation.x += (targetRotX - mainGroup.rotation.x) * 0.04
+    mainGroup.rotation.y += (targetRotY + t * 0.005 - mainGroup.rotation.y) * 0.03
+
+    renderer.render(scene, camera)
+  }
+  animate()
+
+  // ── Stop when overlay dismissed ────────────────────
+  overlay.addEventListener('click', () => {
+    setTimeout(() => {
+      cancelAnimationFrame(rafId)
+      renderer.dispose()
+    }, 1400)
+  }, { once: true })
+}
+
+function _initSanskritWave_unused() {
+  const canvas  = document.getElementById('sanskrit-canvas')
+  const overlay = document.getElementById('entry-overlay')
+  if (!canvas || !overlay) return
+  const ctx = canvas.getContext('2d')
+
+  // Source text — repeated to fill rows
+  const SOURCE_LINES = [
+    'ॐ नमो भगवते सोमाय शशिने सुधाकराय च । क्षीराब्धिजन्मने शान्तचित्ताय विश्वप्रियाय च ॥',
+    'चन्द्रमा यस्य किरणैः शीतलैः सर्वं जगत् सुखम् । स्निग्धं भवति सततं तं वन्दे शशिमौलिनम् ॥',
+    'श्वेतं यस्य वपुः शुभ्रं दधिशङ्खनिभं शुभम् । कुमुदोत्पलपुण्ड्रेक्षु-चम्पकाम्भोजसन्निभम् ॥',
+    'रोहिणीवल्लभं देवं कलानां निधिमुत्तमम् । कलाधरं कलापूर्णं कलाकलितविग्रहम् ॥',
+    'अमृतं यस्य रूपेण विश्वं जीवति नित्यदा । सुधांशुं सुधासिन्धुं सुधानिधिमहं स्तुवे ॥',
+    'निशाकरं निशानाथं निशान्ते यो विराजते । तारामण्डलमध्यस्थं चन्द्रं चन्द्रिकावृतम् ॥',
+    'यस्य दर्शनमात्रेण मनः शान्तिं प्रयाति वै । क्रोधलोभभयादीनि नश्यन्ति सर्वदा नृणाम् ॥',
+    'यस्य प्रसादात् कवयो गीतं कुर्वन्ति सुन्दरम् । रसिकाः प्रेमनिर्भराः भवन्ति चन्द्रदर्शनात् ॥',
+    'ओषधयः सर्वकालं यस्य प्रभावेण वर्धन्ते । सोमं सुमनसं शान्तं सोमं सौम्यस्वभावकम् ॥',
+    'सागराः पूर्णिमायां यस्य दृष्ट्या उन्नतिं गताः । चन्द्रं चन्द्रिकया युक्तं चन्द्रिकाप्रियदर्शनम् ॥',
+    'कलानिधिं कलाधीशं कलाप्रियं कलावतम् । शशधरं शशाङ्कं च शशिनं शशिभूषणम् ॥',
+    'ॐ चन्द्राय विद्महे सुधाकराय धीमहि । तन्नो सोमः प्रचोदयात् ॥',
+  ]
+
+  let W, H, fontSize, lineH, numRows, rafId
+  // Mouse in pixels
+  let mouseX = 0, mouseY = 0
+  // Per-row horizontal scroll offset (each row scrolls at a different speed)
+  let rowScrolls = []
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth  || window.innerWidth
+    H = canvas.height = canvas.offsetHeight || window.innerHeight
+    fontSize = Math.max(12, Math.min(16, W / 52))
+    lineH    = fontSize * 2.3
+    numRows  = Math.ceil(H / lineH) + 3
+    if (!rowScrolls.length) {
+      rowScrolls = Array.from({ length: 40 }, (_, i) => ({
+        x: Math.random() * -800,
+        speed: 0.3 + (i % 5) * 0.15,  // different speed per row
+      }))
+    }
+  }
+  resize()
+  window.addEventListener('resize', resize, { passive: true })
+
+  // Mouse in px
+  overlay.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect()
+    mouseX = e.clientX - r.left
+    mouseY = e.clientY - r.top
+  }, { passive: true })
+  overlay.addEventListener('touchmove', e => {
+    const r = canvas.getBoundingClientRect()
+    mouseX = e.touches[0].clientX - r.left
+    mouseY = e.touches[0].clientY - r.top
+  }, { passive: true })
+
+  let time = 0
+
+  // ── Constants ──────────────────────────────────────
+  const WAVE_AMP   = 20    // base sinusoid amplitude (px)
+  const WAVE_FREQ  = 0.009 // spatial frequency (radians/px)
+  const WAVE_SPEED = 1.4   // time speed multiplier
+  const MOUSE_AMP  = 40    // extra amplitude near mouse
+  const MOUSE_RADIUS = 0.28 // fraction of screen height
+  const SEG        = 5     // strip width (px) — smaller = smoother curve
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H)
+    ctx.fillStyle = '#000'
+    ctx.fillRect(0, 0, W, H)
+
+    ctx.font = `300 ${fontSize}px 'Noto Sans Devanagari', serif`
+
+    for (let row = 0; row < numRows; row++) {
+      const baseY    = row * lineH
+      const rowPhase = row * 0.75   // phase offset between rows
+      const sc       = rowScrolls[row % rowScrolls.length]
+
+      // Advance horizontal scroll
+      sc.x -= sc.speed
+
+      const lineText  = SOURCE_LINES[row % SOURCE_LINES.length] + '   '
+      const textWidth = ctx.measureText(lineText).width
+
+      // Keep scroll in bounds (seamless loop)
+      if (sc.x < -textWidth) sc.x += textWidth
+
+      // Mouse influence on this row: Gaussian bell based on vertical distance
+      const dy          = baseY - mouseY
+      const rowMouseDist = Math.abs(dy) / H
+      const mouseGain   = Math.max(0, 1 - rowMouseDist / MOUSE_RADIUS)
+
+      // Draw row as vertical strips — each strip at its own Y = sinusoid(x)
+      for (let sx = -SEG; sx <= W + SEG; sx += SEG) {
+        // Base sinusoidal Y displacement at this x
+        const baseWave = WAVE_AMP * Math.sin(sx * WAVE_FREQ + time * WAVE_SPEED + rowPhase)
+
+        // Mouse distortion: horizontal Gaussian around mouseX on this row
+        const dx        = sx - mouseX
+        const hDist     = Math.abs(dx) / W
+        const hGain     = Math.max(0, 1 - hDist * 3.5)
+        const mouseWave = MOUSE_AMP * mouseGain * hGain *
+                          Math.sin(sx * WAVE_FREQ * 1.8 + time * WAVE_SPEED * 1.6 + rowPhase)
+
+        const y = baseY + baseWave + mouseWave
+
+        // Brightness: rows+columns near mouse are brighter
+        const proximity = mouseGain * hGain
+        const alpha = 0.11 + proximity * 0.20
+
+        ctx.save()
+        ctx.beginPath()
+        ctx.rect(sx, 0, SEG + 1, H)  // +1 avoids hairline gaps
+        ctx.clip()
+        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`
+        // Draw enough repetitions to fill strip regardless of scroll
+        ctx.fillText(lineText.repeat(4), sc.x, y)
+        ctx.restore()
+      }
+    }
+
+    time += 0.022
+    rafId = requestAnimationFrame(draw)
+  }
+
+  document.fonts.ready.then(() => draw())
+
+  // Stop animation after overlay fades out
+  overlay.addEventListener('click', () => {
+    setTimeout(() => cancelAnimationFrame(rafId), 1300)
+  }, { once: true })
+}
+
+
 function initAudio() {
   const overlay   = document.getElementById('entry-overlay')
   const entryBtn  = document.getElementById('entry-btn')
@@ -673,4 +1042,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initArticleModal()
   initStreaming()
   initAudio()
+  initPlasmaSphere()
 })
