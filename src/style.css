@@ -130,13 +130,19 @@ body::before {
   mix-blend-mode: screen;
 }
 /* ── Spotlight navbar ──────────────────────────────── */
-#nav,
-.nav__inner,
-.nav-spotlight,
-.nav-spotlight .super-trouper,
-.nav-spotlight .ray { overflow: visible; }
+#nav { overflow: visible; }
+.nav__inner { overflow: visible; }
 
 @supports (anchor-name: --foo) {
+  /* anchor-scope on the nav itself so super-troupers can span full width */
+  #nav { anchor-scope: all; }
+
+  #nav:has(a:active) .super-trouper > * {
+    --outset: -1.5rem;
+    --delay: 0s;
+    --duration: 0.2s;
+  }
+
   .nav-spotlight {
     --ray-width: 2.5rem;
     --ray-opacity: 0.45;
@@ -151,13 +157,6 @@ body::before {
     justify-items: center;
     align-items: center;
     gap: var(--v-gap);
-    anchor-scope: all;
-
-    &:has(a:active) .super-trouper > * {
-      --outset: -1.5rem;
-      --delay: 0s;
-      --duration: 0.2s;
-    }
 
     > * { grid-column: 1; }
   }
@@ -177,15 +176,19 @@ body::before {
     &:nth-child(3) { anchor-name: --spot-green; }
   }
 
-  .nav-spotlight .super-trouper {
-    grid-row: 1 / 3;
-    width: 100%;
-    height: 100%;
+  /* Super-troupers are now direct children of #nav (position:fixed),
+     so they get position:absolute and cover the full nav width */
+  .super-trouper {
+    position: absolute;
+    inset: 0;
     pointer-events: none;
+    overflow: visible;
   }
 
-  .nav-spotlight .ray {
-    height: 100%;
+  .super-trouper .ray {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
     mask-image: linear-gradient(0deg, #0000 0.3rem, #000 4rem);
 
     .l-l, .l-r, .r-l, .r-r {
@@ -240,7 +243,7 @@ body::before {
     }
   }
 
-  .nav-spotlight .light {
+  .super-trouper .light {
     position: absolute;
     left: calc(anchor(--link left) - var(--outset));
     right: calc(anchor(--link right) - var(--outset));
